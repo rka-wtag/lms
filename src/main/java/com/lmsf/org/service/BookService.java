@@ -2,7 +2,7 @@ package com.lmsf.org.service;
 
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
-import com.lmsf.org.model.BookModel;
+import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +18,13 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
-    public ResponseEntity<Book> createBook(@Validated BookModel bookModel){
+    public ResponseEntity<Book> createBook(BookDto bookDto){
         try {
             Book book = new Book();
-            book.setTitle(bookModel.getTitle());
-            book.setCopiesAvailable(bookModel.getCopies_available());
-            book.setPublicationYear((bookModel.getPublication_year()));
-            book.setAuthor(linkAuthor(bookModel.getAuthor_id()));
+            book.setTitle(bookDto.getTitle());
+            book.setCopiesAvailable(bookDto.getCopies_available());
+            book.setPublicationYear((bookDto.getPublication_year()));
+            book.setAuthor(linkAuthor(bookDto.getAuthor_id()));
 
             final Book savedBook = bookRepository.save(book);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);

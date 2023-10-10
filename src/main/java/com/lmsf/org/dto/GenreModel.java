@@ -1,4 +1,4 @@
-package com.lmsf.org.model;
+package com.lmsf.org.dto;
 
 public class GenreModel {
 }

@@ -20,13 +20,11 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min = 1, max = 255)
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     private String title;
-    @Size(min = 1, max = 255)
-    @Column(name = "publication_year", nullable = false)
+    @Column(name = "publication_year")
     private int publicationYear;
-    @Column(name = "copies_available", nullable = false)
+    @Column(name = "copies_available")
     private int copiesAvailable;
 
     @JsonBackReference

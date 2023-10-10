@@ -1,13 +1,14 @@
 package com.lmsf.org.controllers;
 
 import com.lmsf.org.entity.Book;
-import com.lmsf.org.model.BookModel;
+import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.service.BookGenreService;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,9 +17,9 @@ public class BookController {
     private final BookService bookService;
     private final BookGenreService bookGenreService;
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody BookModel bookModel) {
-            ResponseEntity<Book> response = bookService.createBook(bookModel);
-            bookGenreService.createBookGenre(bookModel.getGenreIds(), response.getBody());
+    public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
+            ResponseEntity<Book> response = bookService.createBook(bookDto);
+            bookGenreService.createBookGenre(bookDto.getGenreIds(), response.getBody());
             return response;
     }
 
