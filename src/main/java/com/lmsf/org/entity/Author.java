@@ -19,15 +19,11 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min = 1, max = 255)
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
-    @Size(min = 1, max = 255)
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name")
     private String firstName;
-    @Email
-    @Size(min = 1, max = 255)
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email")
     private String email;
 
     /*@JsonManagedReference

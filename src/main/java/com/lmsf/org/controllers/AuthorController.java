@@ -1,10 +1,14 @@
 package com.lmsf.org.controllers;
 
+import com.lmsf.org.dto.AuthorDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -12,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthorController {
     private final AuthorService authorService;
     @PostMapping("/")
-    public Author createBook(@RequestBody Author author) {
-        Author savedAuthor = authorService.createAuthor(author);
-        return savedAuthor;
+    public ResponseEntity<Author> createBook(@RequestBody @Valid AuthorDto authorDto) {
+        ResponseEntity<Author> response = authorService.createAuthor(authorDto);
+        return response;
     }
 
     @DeleteMapping("/{id}")
