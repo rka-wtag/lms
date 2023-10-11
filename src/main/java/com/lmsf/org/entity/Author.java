@@ -23,7 +23,7 @@ public class Author {
     private String lastName;
     @Column(name = "first_name")
     private String firstName;
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     /*@JsonManagedReference

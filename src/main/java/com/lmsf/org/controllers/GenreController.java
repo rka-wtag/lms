@@ -1,9 +1,12 @@
 package com.lmsf.org.controllers;
 
+import com.lmsf.org.dto.GenreDto;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,8 +16,8 @@ public class GenreController {
     public final GenreService genreService;
 
     @PostMapping("/")
-    public Genre createGenre(@RequestBody Genre genre) {
-        Genre savedGenre = genreService.createGenre(genre);
+    public Genre createGenre(@RequestBody @Valid GenreDto genreDto) {
+        Genre savedGenre = genreService.createGenre(genreDto);
         return savedGenre;
     }
 
