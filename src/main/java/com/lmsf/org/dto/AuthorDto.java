@@ -16,11 +16,13 @@ public class AuthorDto {
     @NotNull(message = "The author should have last name")
     @Size(min = 1, max = 255)
     private String lastName;
+
     @NotNull(message = "The author should have first name")
     @Size(min = 1, max = 255)
     private String firstName;
+
     @NotNull(message = "The author should have an email")
-    @Email
+    @Email(message = "Invalid email address")
     @Size(min = 1, max = 255)
     @Column(unique = true)
     private String email;

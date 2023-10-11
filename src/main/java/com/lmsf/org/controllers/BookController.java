@@ -5,10 +5,12 @@ import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.service.BookGenreService;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,16 +18,23 @@ import javax.validation.Valid;
 public class BookController {
     private final BookService bookService;
     private final BookGenreService bookGenreService;
+
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
-            ResponseEntity<Book> response = bookService.createBook(bookDto);
-            bookGenreService.createBookGenre(bookDto.getGenreIds(), response.getBody());
-            return response;
+            Book savedBook = bookService.createBook(bookDto);
+            bookGenreService.createBookGenre(bookDto.getGenreIds(), savedBook);
+            return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Book>> fetchBooks() {
+        List<Book> books = bookService.fetchBooks();
+        return ResponseEntity.ok(books);
     }
     @PutMapping
     public Book updateBook(@RequestBody Book book) {

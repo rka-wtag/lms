@@ -12,31 +12,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
-    public ResponseEntity<Book> createBook(BookDto bookDto){
-        try {
-            Book book = new Book();
-            book.setTitle(bookDto.getTitle());
-            book.setCopiesAvailable(bookDto.getCopies_available());
-            book.setPublicationYear((bookDto.getPublication_year()));
-            book.setAuthor(linkAuthor(bookDto.getAuthor_id()));
+    public Book createBook(BookDto bookDto){
+        Book book = new Book();
+        book.setTitle(bookDto.getTitle());
+        book.setCopiesAvailable(bookDto.getCopies_available());
+        book.setPublicationYear((bookDto.getPublication_year()));
+        book.setAuthor(linkAuthor(bookDto.getAuthor_id()));
 
-            final Book savedBook = bookRepository.save(book);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        final Book savedBook = bookRepository.save(book);
+        return savedBook;
+    }
 
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public List<Book> fetchBooks(){
+        return bookRepository.findAll();
     }
     public Author linkAuthor(Long author_id){
-        return authorRepository.findById(author_id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Author with id %d not found", author_id)));
+        return authorRepository.findById(author_id).get();
     }
     public Book getBook(Long id){
         Book book = bookRepository.findById(id).get();
