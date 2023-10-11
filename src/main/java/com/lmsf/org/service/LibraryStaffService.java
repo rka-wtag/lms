@@ -1,9 +1,7 @@
 package com.lmsf.org.service;
 
 import com.lmsf.org.entity.LibraryStaff;
-import com.lmsf.org.entity.Member;
 import com.lmsf.org.repository.LibraryStaffRepository;
-import com.lmsf.org.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

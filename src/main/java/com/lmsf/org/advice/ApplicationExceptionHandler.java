@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -30,9 +29,9 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException dataIntegrityViolationException){
+    public Map<String, String> handleDataIntegrityViolationException(){
         Map<String, String> errors =  new HashMap<>();
-        errors.put("errorMessage", dataIntegrityViolationException.getMessage());
+        errors.put("errorMessage", "An error has occured");
         return errors;
     }
 

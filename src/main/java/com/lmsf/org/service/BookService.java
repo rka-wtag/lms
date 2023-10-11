@@ -1,18 +1,14 @@
 package com.lmsf.org.service;
 
+import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
-import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.exception.AuthorNotFoundException;
 import com.lmsf.org.exception.UserNotFoundException;
 import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
