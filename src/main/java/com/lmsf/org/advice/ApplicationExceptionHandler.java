@@ -1,5 +1,8 @@
 package com.lmsf.org.advice;
 
+import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.GenreNotFoundException;
+import com.lmsf.org.exception.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,13 +30,41 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public String handleDataIntegrityViolationException(){
-        return "Invalid input";
+    public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException dataIntegrityViolationException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", dataIntegrityViolationException.getMessage());
+        return errors;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
-    public String handleNoSuchElementException(NoSuchElementException noSuchElementException){
-        return "An error has occured";
+    public Map<String, String> handleNoSuchElementException(NoSuchElementException noSuchElementException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", noSuchElementException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String, String> handleUserNotFoundException(UserNotFoundException userNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", userNotFoundException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public Map<String, String> handleAuthorNotFoundException(AuthorNotFoundException authorNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", authorNotFoundException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(GenreNotFoundException.class)
+    public Map<String, String> handleGenreNotFoundException(GenreNotFoundException genreNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", genreNotFoundException.getMessage());
+        return errors;
     }
 }

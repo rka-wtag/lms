@@ -3,6 +3,7 @@ package com.lmsf.org.service;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.BookGenre;
 import com.lmsf.org.entity.Genre;
+import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.repository.BookGenreRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,12 @@ import java.util.Set;
 public class BookGenreService {
     private final BookGenreRepository bookGenreRepository;
     private final GenreRepository genreRepository;
-    public void createBookGenre(Set<Long> genreIds, Book book){
+    public void createBookGenre(Set<Long> genreIds, Book book) throws GenreNotFoundException {
 
         for(Long gId : genreIds){
-            Genre genre = genreRepository.findById(gId).get();
+            Genre genre = genreRepository.findById(gId).orElse(null);
+            if(genre == null) throw new GenreNotFoundException("Genre not found with id : " + gId);
+
             BookGenre bookGenre = new BookGenre();
 
             bookGenre.setBook(book);
