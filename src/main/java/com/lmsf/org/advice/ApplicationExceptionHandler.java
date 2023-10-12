@@ -1,6 +1,7 @@
 package com.lmsf.org.advice;
 
 import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.exception.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -64,6 +65,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleGenreNotFoundException(GenreNotFoundException genreNotFoundException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", genreNotFoundException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotFoundException.class)
+    public Map<String, String> handleBookNotFoundException(BookNotFoundException bookNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", bookNotFoundException.getMessage());
         return errors;
     }
 }

@@ -3,6 +3,7 @@ package com.lmsf.org.controllers;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.dto.BookDto;
 import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.exception.UserNotFoundException;
 import com.lmsf.org.service.BookGenreService;
@@ -23,7 +24,7 @@ public class BookController {
     private final BookGenreService bookGenreService;
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) throws AuthorNotFoundException, GenreNotFoundException {
+    public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
             Book savedBook = bookService.createBook(bookDto);
             bookGenreService.createBookGenre(bookDto.getGenreIds(), savedBook);
             return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
@@ -39,14 +40,15 @@ public class BookController {
         List<Book> books = bookService.fetchBooks();
         return ResponseEntity.ok(books);
     }
-    @PutMapping
-    public Book updateBook(@RequestBody Book book) {
-        Book updatedBook = bookService.updateBook(book);
-        return updatedBook;
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@RequestBody @Valid BookDto bookDto, @PathVariable Long id) {
+        Book updatedBook = bookService.updateBook(bookDto, id);
+        bookGenreService.createBookGenre(bookDto.getGenreIds(), updatedBook);
+        return ResponseEntity.ok(updatedBook);
     }
 
     @GetMapping("/{id}")
-    public Book getBook(@PathVariable Long id) throws UserNotFoundException {
+    public Book getBook(@PathVariable Long id) {
         Book updatedBook = bookService.getBook(id);
         return updatedBook;
     }

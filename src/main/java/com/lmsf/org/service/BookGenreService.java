@@ -16,12 +16,10 @@ import java.util.Set;
 public class BookGenreService {
     private final BookGenreRepository bookGenreRepository;
     private final GenreRepository genreRepository;
-    public void createBookGenre(Set<Long> genreIds, Book book) throws GenreNotFoundException {
+    public void createBookGenre(Set<Long> genreIds, Book book){
 
         for(Long gId : genreIds){
-            Genre genre = genreRepository.findById(gId).orElse(null);
-            if(genre == null) throw new GenreNotFoundException("Genre not found with id : " + gId);
-
+            Genre genre = genreRepository.findById(gId).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : " + gId));
             BookGenre bookGenre = new BookGenre();
 
             bookGenre.setBook(book);
