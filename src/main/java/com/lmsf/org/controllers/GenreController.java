@@ -4,9 +4,11 @@ import com.lmsf.org.dto.GenreDto;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,4 +33,16 @@ public class GenreController {
         Genre updateGenre = genreService.updateGenre(id, genre);
         return updateGenre;
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Genre> getGenre(@PathVariable Long id){
+        return ResponseEntity.ok(genreService.getGenre(id));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Genre>> fetchGenres(){
+        return ResponseEntity.ok(genreService.fetchGenres());
+    }
+
+
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class BookDto {
     @NotNull(message = "Title shouldn't be null")
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "Title shouldn't be null")
     private String title;
     @NotNull(message = "The book should have a publication year")
     private int publicationYear;
