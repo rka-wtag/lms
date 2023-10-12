@@ -21,9 +21,9 @@ public class BookService {
     public Book createBook(BookDto bookDto) throws AuthorNotFoundException {
         Book book = new Book();
         book.setTitle(bookDto.getTitle());
-        book.setCopiesAvailable(bookDto.getCopies_available());
-        book.setPublicationYear((bookDto.getPublication_year()));
-        book.setAuthor(linkAuthor(bookDto.getAuthor_id()));
+        book.setCopiesAvailable(bookDto.getCopiesAvailable());
+        book.setPublicationYear((bookDto.getPublicationYear()));
+        book.setAuthor(linkAuthor(bookDto.getAuthorId()));
 
         final Book savedBook = bookRepository.save(book);
         return savedBook;

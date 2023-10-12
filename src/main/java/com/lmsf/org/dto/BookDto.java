@@ -16,10 +16,10 @@ public class BookDto {
     @Size(min = 1, max = 255)
     private String title;
     @NotNull(message = "The book should have a publication year")
-    private int publication_year;
-    private int copies_available;
+    private int publicationYear;
+    private int copiesAvailable;
     @NotNull(message = "The book should have a author")
-    private Long author_id;
+    private Long authorId;
     @NotNull(message = "The book should have at least one genre")
     private Set<Long> genreIds;
 }
