@@ -3,7 +3,6 @@ package com.lmsf.org.advice;
 import com.lmsf.org.exception.AuthorNotFoundException;
 import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.exception.GenreNotFoundException;
-import com.lmsf.org.exception.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,14 +40,6 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleNoSuchElementException(NoSuchElementException noSuchElementException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", noSuchElementException.getMessage());
-        return errors;
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Map<String, String> handleUserNotFoundException(UserNotFoundException userNotFoundException){
-        Map<String, String> errors =  new HashMap<>();
-        errors.put("errorMessage", userNotFoundException.getMessage());
         return errors;
     }
 

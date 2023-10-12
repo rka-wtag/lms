@@ -16,13 +16,13 @@ import java.util.List;
 @RequestMapping("/authors")
 public class AuthorController {
     private final AuthorService authorService;
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Author> createBook(@RequestBody @Valid AuthorDto authorDto) {
         Author author = authorService.createAuthor(authorDto);
         return new ResponseEntity<>(author, HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Author>> fetchAuthors() {
         List<Author> authors = authorService.fetchAuthors();
         return ResponseEntity.ok(authors);
