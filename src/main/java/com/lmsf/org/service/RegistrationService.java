@@ -25,10 +25,8 @@ public class RegistrationService {
         user.setUsername(registerDto.getUserName());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
-        Role roles = roleRepository.findByName("USER").get();
-        user.setRoles(Collections.singletonList(roles));
-
-        System.out.println(user.getRoles());
+        Role role = roleRepository.findByName("USER").get();
+        user.setRoles(Collections.singletonList(role));
 
         userRepository.save(user);
     }
