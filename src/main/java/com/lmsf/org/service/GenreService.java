@@ -16,7 +16,7 @@ public class GenreService {
 
     public Genre createGenre(GenreDto genreDto){
         Genre genre = new Genre();
-        genre.setName(genreDto.getName());
+        genre.setName(genreDto.getName().toUpperCase());
         Genre savedGenre = genreRepository.save(genre);
         return savedGenre;
     }
@@ -27,7 +27,7 @@ public class GenreService {
 
     public Genre updateGenre(Long id, Genre genre){
         Genre newGenre = genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
-        newGenre.setName(genre.getName());
+        newGenre.setName(genre.getName().toUpperCase());
         genreRepository.save(newGenre);
         return newGenre;
     }

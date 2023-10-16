@@ -28,7 +28,7 @@ public class RegistrationController {
         if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword())){
             return new ResponseEntity<>("password does not match", HttpStatus.BAD_REQUEST);
         }
-        if(!userRepository.existsByUsername(registerDto.getUserName())) {
+        if(!userRepository.existsByUsername(registerDto.getUsername())) {
             registrationService.register(registerDto);
             return ResponseEntity.ok("Registration successful");
         }

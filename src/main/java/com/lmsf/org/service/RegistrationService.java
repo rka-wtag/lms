@@ -22,7 +22,7 @@ public class RegistrationService {
 
     public void register(RegisterDto registerDto){
         UserInfo user = new UserInfo();
-        user.setUsername(registerDto.getUserName());
+        user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Role role = roleRepository.findByName("USER").get();

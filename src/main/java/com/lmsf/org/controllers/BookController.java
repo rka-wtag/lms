@@ -7,6 +7,7 @@ import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ public class BookController {
     private final BookService bookService;
     private final BookGenreService bookGenreService;
 
+    @Transactional
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
             Book savedBook = bookService.createBook(bookDto);
