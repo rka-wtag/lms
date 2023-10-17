@@ -17,7 +17,7 @@ public class GenreController {
 
     public final GenreService genreService;
 
-    @PostMapping("/")
+    @PostMapping
     public Genre createGenre(@RequestBody @Valid GenreDto genreDto) {
         Genre savedGenre = genreService.createGenre(genreDto);
         return savedGenre;
@@ -39,7 +39,7 @@ public class GenreController {
         return ResponseEntity.ok(genreService.getGenre(id));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Genre>> fetchGenres(){
         return ResponseEntity.ok(genreService.fetchGenres());
     }

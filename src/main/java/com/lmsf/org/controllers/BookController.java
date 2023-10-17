@@ -1,8 +1,7 @@
 package com.lmsf.org.controllers;
 
-import com.lmsf.org.entity.Book;
 import com.lmsf.org.dto.BookDto;
-import com.lmsf.org.service.BookGenreService;
+import com.lmsf.org.entity.Book;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,19 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookController {
     private final BookService bookService;
-    private final BookGenreService bookGenreService;
 
     @Transactional
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
             Book savedBook = bookService.createBook(bookDto);
-            bookGenreService.createBookGenre(bookDto.getGenreIds(), savedBook);
             return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
@@ -41,7 +39,6 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@RequestBody @Valid BookDto bookDto, @PathVariable Long id) {
         Book updatedBook = bookService.updateBook(bookDto, id);
-        bookGenreService.createBookGenre(bookDto.getGenreIds(), updatedBook);
         return ResponseEntity.ok(updatedBook);
     }
 
@@ -49,6 +46,24 @@ public class BookController {
     public Book getBook(@PathVariable Long id) {
         Book updatedBook = bookService.getBook(id);
         return updatedBook;
+    }
+
+    @GetMapping("/byGenre/{id}")
+    public ResponseEntity<Set<Book>> getBooksByGenre(@PathVariable Long id){
+        Set<Book> books = bookService.getBooksByGenre(id);
+        if(books.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/booksOfAuthor/{id}")
+    public ResponseEntity<Set<Book>> getBooksByAuthor(@PathVariable Long id){
+        Set<Book> books = bookService.getBooksByAuthor(id);
+        if(books.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(books);
     }
 
 }
