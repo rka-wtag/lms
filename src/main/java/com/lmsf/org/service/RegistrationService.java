@@ -3,6 +3,7 @@ package com.lmsf.org.service;
 import com.lmsf.org.dto.RegisterDto;
 import com.lmsf.org.entity.Role;
 import com.lmsf.org.entity.UserInfo;
+import com.lmsf.org.exception.RoleNotFoundException;
 import com.lmsf.org.repository.RoleRepository;
 import com.lmsf.org.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,7 @@ public class RegistrationService {
         UserInfo user = new UserInfo();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-
-        Role role = roleRepository.findByName("USER").get();
+        Role role = roleRepository.findByName("SUPER ADMIN").orElseThrow(() -> new RoleNotFoundException("No such authority available"));
         user.setRoles(Collections.singletonList(role));
 
         userRepository.save(user);

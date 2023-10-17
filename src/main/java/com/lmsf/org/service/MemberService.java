@@ -11,17 +11,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public Member createMember(Member member){
-        Member savedMember = memberRepository.save(member);
-        return savedMember;
+        return memberRepository.save(member);
     }
-
     public Member getMember(Long id){
-        Member member = memberRepository.findById(id).get();
-        return member;
+        return memberRepository.findById(id).get();
     }
     public Member updateMember(Member member){
-        Member updatedMember = memberRepository.save(member);
-        return updatedMember;
+        return memberRepository.save(member);
     }
     public void deleteMember(Long id){
         memberRepository.deleteById(id);

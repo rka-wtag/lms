@@ -1,8 +1,7 @@
 package com.lmsf.org.advice;
 
-import com.lmsf.org.exception.AuthorNotFoundException;
-import com.lmsf.org.exception.BookNotFoundException;
-import com.lmsf.org.exception.GenreNotFoundException;
+import com.lmsf.org.entity.Role;
+import com.lmsf.org.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -65,6 +64,22 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleBookNotFoundException(BookNotFoundException bookNotFoundException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", bookNotFoundException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(LibraryStaffNotFoundException.class)
+    public Map<String, String> handleLibraryStaffNotFoundException(LibraryStaffNotFoundException libraryStaffNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", libraryStaffNotFoundException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(RoleNotFoundException.class)
+    public Map<String, String> handleRoleNotFoundException(RoleNotFoundException roleNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", roleNotFoundException.getMessage());
         return errors;
     }
 

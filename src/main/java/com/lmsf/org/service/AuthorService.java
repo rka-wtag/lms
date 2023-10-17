@@ -23,16 +23,14 @@ public class AuthorService {
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
         author.setEmail(authorDto.getEmail());
-        Author savedAuthor = authorRepository.save(author);
-        return savedAuthor;
+        return authorRepository.save(author);
     }
 
     public List<Author> fetchAuthors(){
         return authorRepository.findAll();
     }
     public Author getAuthor(Long id){
-        Author author = authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+id));
-        return author;
+        return authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+id));
     }
     public Author updateAuthor(AuthorDto authorDto, Long id){
         Author author = new Author();
@@ -40,14 +38,11 @@ public class AuthorService {
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
         author.setEmail(authorDto.getEmail());
-        Author updatedAuthor = authorRepository.save(author);
-        return updatedAuthor;
+        return authorRepository.save(author);
     }
-
     public Set<Book> getBooksByAuthor(Long id){
         return bookRepository.findByAuthorId(id);
     }
-
     public void deleteAuthor(Long id){
         authorRepository.deleteById(id);
     }

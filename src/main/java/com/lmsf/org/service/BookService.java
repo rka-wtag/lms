@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -40,28 +39,20 @@ public class BookService {
         }
 
         book.setGenres(genres);
-        final Book savedBook = bookRepository.save(book);
-        return savedBook;
+        return bookRepository.save(book);
     }
-
     public List<Book> fetchBooks(){
         return bookRepository.findAll();
     }
     public Set<Book> getBooksByGenre(Long id){
         return bookRepository.findByGenresId(id);
     }
-
-    public Set<Book> getBooksByYear(int year){
-        return bookRepository.findByPublicationYear(year);
-    }
-
     public Author linkAuthor(Long author_id) {
-        Author author = authorRepository.findById(author_id).orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+author_id));
-        return author;
+        return authorRepository.findById(author_id)
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+author_id));
     }
     public Book getBook(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
-        return book;
+        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
     }
     public Book updateBook(BookDto bookDto, Long id){
         Book book = new Book();
@@ -79,8 +70,7 @@ public class BookService {
             genres.add(genre);
         }
         book.setGenres(genres);
-        Book updatedBook = bookRepository.save(book);
-        return updatedBook;
+        return bookRepository.save(book);
     }
     public void deleteBook(Long id){
         bookRepository.deleteById(id);

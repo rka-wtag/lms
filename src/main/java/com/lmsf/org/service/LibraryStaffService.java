@@ -1,6 +1,7 @@
 package com.lmsf.org.service;
 
 import com.lmsf.org.entity.LibraryStaff;
+import com.lmsf.org.exception.LibraryStaffNotFoundException;
 import com.lmsf.org.repository.LibraryStaffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,17 +13,13 @@ public class LibraryStaffService {
     private final LibraryStaffRepository libraryStaffRepository;
 
     public LibraryStaff createLibraryStaff(LibraryStaff libraryStaff){
-        LibraryStaff savedLibraryStaff = libraryStaffRepository.save(libraryStaff);
-        return savedLibraryStaff;
+        return libraryStaffRepository.save(libraryStaff);
     }
-
     public LibraryStaff getLibraryStaff(Long id){
-        LibraryStaff libraryStaff = libraryStaffRepository.findById(id).get();
-        return libraryStaff;
+        return libraryStaffRepository.findById(id).orElseThrow(() -> new LibraryStaffNotFoundException("No Staff with id : +id"+id));
     }
     public LibraryStaff updateLibraryStaff(LibraryStaff libraryStaff){
-        LibraryStaff updatedLibraryStaff = libraryStaffRepository.save(libraryStaff);
-        return updatedLibraryStaff;
+        return libraryStaffRepository.save(libraryStaff);
     }
     public void deleteLibraryStaff(Long id){
         libraryStaffRepository.deleteById(id);
