@@ -12,8 +12,7 @@ public class LibraryStaffController {
     private final LibraryStaffService libraryStaffService;
     @PostMapping("/")
     public LibraryStaff createLibraryStaff(@RequestBody LibraryStaff libraryStaff) {
-        LibraryStaff savedLibraryStaff = libraryStaffService.createLibraryStaff(libraryStaff);
-        return savedLibraryStaff;
+        return libraryStaffService.createLibraryStaff(libraryStaff);
     }
     @DeleteMapping("/{id}")
     public void deleteLibraryStaff(@PathVariable Long id) {
@@ -21,8 +20,7 @@ public class LibraryStaffController {
     }
     @PutMapping("/")
     public LibraryStaff updateLibraryStaff(@RequestBody LibraryStaff libraryStaff) {
-        LibraryStaff updateLibraryStaff = libraryStaffService.updateLibraryStaff(libraryStaff);
-        return updateLibraryStaff;
+        return libraryStaffService.updateLibraryStaff(libraryStaff);
     }
     @GetMapping("/{id}")
     public LibraryStaff getLibraryStaff(@PathVariable Long id) {

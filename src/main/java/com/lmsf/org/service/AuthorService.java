@@ -5,16 +5,18 @@ import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.exception.AuthorNotFoundException;
 import com.lmsf.org.repository.AuthorRepository;
+import com.lmsf.org.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
 public class AuthorService {
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
 
     public Author createAuthor(AuthorDto authorDto){
         Author author = new Author();
@@ -41,6 +43,11 @@ public class AuthorService {
         Author updatedAuthor = authorRepository.save(author);
         return updatedAuthor;
     }
+
+    public Set<Book> getBooksByAuthor(Long id){
+        return bookRepository.findByAuthorId(id);
+    }
+
     public void deleteAuthor(Long id){
         authorRepository.deleteById(id);
     }

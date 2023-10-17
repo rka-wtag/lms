@@ -2,6 +2,8 @@ package com.lmsf.org.controllers;
 
 import com.lmsf.org.dto.AuthorDto;
 import com.lmsf.org.entity.Author;
+import com.lmsf.org.entity.Book;
+import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,14 +37,22 @@ public class AuthorController {
     }
     @PutMapping("/{id}")
     public Author updateAuthor(@RequestBody @Valid AuthorDto authorDto, @PathVariable Long id) {
-        Author updateAuthor = authorService.updateAuthor(authorDto, id);
-        return updateAuthor;
+        return authorService.updateAuthor(authorDto, id);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Author> getAuthor(@PathVariable Long id) {
         Author author = authorService.getAuthor(id);
         return ResponseEntity.ok(author);
+    }
+
+    @GetMapping("/{id}/books")
+    public ResponseEntity<Set<Book>> getBooksByAuthor(@PathVariable Long id){
+        Set<Book> books = authorService.getBooksByAuthor(id);
+        if(books.isEmpty()){
+            throw new BookNotFoundException("No books were found");
+        }
+        return ResponseEntity.ok(books);
     }
 
 }

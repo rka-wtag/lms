@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,24 +45,6 @@ public class BookController {
     public Book getBook(@PathVariable Long id) {
         Book updatedBook = bookService.getBook(id);
         return updatedBook;
-    }
-
-    @GetMapping("/byGenre/{id}")
-    public ResponseEntity<Set<Book>> getBooksByGenre(@PathVariable Long id){
-        Set<Book> books = bookService.getBooksByGenre(id);
-        if(books.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(books);
-    }
-
-    @GetMapping("/booksOfAuthor/{id}")
-    public ResponseEntity<Set<Book>> getBooksByAuthor(@PathVariable Long id){
-        Set<Book> books = bookService.getBooksByAuthor(id);
-        if(books.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(books);
     }
 
 }

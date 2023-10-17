@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -50,8 +51,8 @@ public class BookService {
         return bookRepository.findByGenresId(id);
     }
 
-    public Set<Book> getBooksByAuthor(Long id){
-        return bookRepository.findByAuthorId(id);
+    public Set<Book> getBooksByYear(int year){
+        return bookRepository.findByPublicationYear(year);
     }
 
     public Author linkAuthor(Long author_id) {
