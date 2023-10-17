@@ -12,27 +12,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
+
     @PostMapping("/")
     public ResponseEntity<Member> createMember(@RequestBody Member member) {
-        Member savedMember = memberService.createMember(member);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMember);
+        return new ResponseEntity<>(memberService.createMember(member), HttpStatus.CREATED);
     }
-
 
     @DeleteMapping("/{id}")
-    public void deleteMember(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
+        return ResponseEntity.ok().build();
     }
+
     @PutMapping
-    public Member updateMember(@RequestBody Member member) {
-        Member updatedMember = memberService.updateMember(member);
-        return updatedMember;
+    public ResponseEntity<Member> updateMember(@RequestBody Member member) {
+        return ResponseEntity.ok(memberService.updateMember(member));
     }
 
     @GetMapping("/{id}")
-    public Member getMember(@PathVariable Long id) {
-        Member member = memberService.getMember(id);
-        return member;
+    public ResponseEntity<Member> getMember(@PathVariable Long id) {
+        return ResponseEntity.ok(memberService.getMember(id));
     }
 
 

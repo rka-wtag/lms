@@ -21,13 +21,13 @@ public class BookController {
     @Transactional
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
-            Book savedBook = bookService.createBook(bookDto);
-            return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+            return new ResponseEntity<>(bookService.createBook(bookDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
@@ -35,6 +35,7 @@ public class BookController {
         List<Book> books = bookService.fetchBooks();
         return ResponseEntity.ok(books);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@RequestBody @Valid BookDto bookDto, @PathVariable Long id) {
         Book updatedBook = bookService.updateBook(bookDto, id);

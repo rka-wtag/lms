@@ -32,12 +32,14 @@ public class AuthorController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAuthor(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         authorService.deleteAuthor(id);
+        return ResponseEntity.ok().build();
     }
+
     @PutMapping("/{id}")
-    public Author updateAuthor(@RequestBody @Valid AuthorDto authorDto, @PathVariable Long id) {
-        return authorService.updateAuthor(authorDto, id);
+    public ResponseEntity<Author> updateAuthor(@RequestBody @Valid AuthorDto authorDto, @PathVariable Long id) {
+        return ResponseEntity.ok(authorService.updateAuthor(authorDto, id));
     }
 
     @GetMapping("/{id}")

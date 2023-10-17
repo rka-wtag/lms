@@ -25,7 +25,7 @@ public class RegistrationService {
         UserInfo user = new UserInfo();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        Role role = roleRepository.findByName("SUPER ADMIN").orElseThrow(() -> new RoleNotFoundException("No such authority available"));
+        Role role = roleRepository.findByName("USER").orElseThrow(() -> new RoleNotFoundException("No such authority available"));
         user.setRoles(Collections.singletonList(role));
 
         userRepository.save(user);

@@ -7,6 +7,7 @@ import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.service.BookService;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,20 +24,19 @@ public class GenreController {
     private final BookService bookService;
 
     @PostMapping
-    public Genre createGenre(@RequestBody @Valid GenreDto genreDto) {
-        Genre savedGenre = genreService.createGenre(genreDto);
-        return savedGenre;
+    public ResponseEntity<Genre> createGenre(@RequestBody @Valid GenreDto genreDto) {
+        return new ResponseEntity<>(genreService.createGenre(genreDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteGenre(@PathVariable Long id){
+    public ResponseEntity<Void> deleteGenre(@PathVariable Long id){
         genreService.deleteGenre(id);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public Genre updateGenre(@PathVariable Long id, @RequestBody Genre genre){
-        Genre updateGenre = genreService.updateGenre(id, genre);
-        return updateGenre;
+    public ResponseEntity<Genre> updateGenre(@PathVariable Long id, @RequestBody Genre genre){
+        return ResponseEntity.ok(genreService.updateGenre(id, genre));
     }
 
     @GetMapping("/{id}")
@@ -57,6 +57,5 @@ public class GenreController {
         }
         return ResponseEntity.ok(books);
     }
-
 
 }
