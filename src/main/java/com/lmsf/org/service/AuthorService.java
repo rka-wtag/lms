@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -40,7 +39,7 @@ public class AuthorService {
         author.setEmail(authorDto.getEmail());
         return authorRepository.save(author);
     }
-    public Set<Book> getBooksByAuthor(Long id){
+    public List<Book> getBooksByAuthor(Long id){
         return bookRepository.findByAuthorId(id);
     }
     public void deleteAuthor(Long id){

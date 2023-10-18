@@ -12,6 +12,7 @@ import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,7 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
+    @Transactional
     public Book createBook(BookDto bookDto) {
         Book book = new Book();
         book.setTitle(bookDto.getTitle());
@@ -34,7 +36,7 @@ public class BookService {
 
         for(Long genreId : bookDto.getGenreIds()){
             Genre genre = genreRepository.findById(genreId)
-                    .orElseThrow(() -> new GenreNotFoundException("genre not found with id : id" +genreId));
+                    .orElseThrow(() -> new GenreNotFoundException("genre not found with id : " +genreId));
             genres.add(genre);
         }
 
@@ -42,10 +44,25 @@ public class BookService {
         return bookRepository.save(book);
     }
     public List<Book> fetchBooks(){
-        return bookRepository.findAll();
+        List<Book> books = bookRepository.findAll();
+        if(books.isEmpty())
+            throw new BookNotFoundException("No Books were found");
+        return books;
     }
-    public Set<Book> getBooksByGenre(Long id){
+    public List<Book> getBooksByGenre(Long id){
         return bookRepository.findByGenresId(id);
+    }
+    public List<Book> getBooksByTitle(String title){
+        List<Book> books = bookRepository.findByTitle(title);
+        if(books.isEmpty())
+            throw new BookNotFoundException("No Books were found with name : "+title);
+        return books;
+    }
+    public List<Book> getBooksByPublicationYear(int publicationYear){
+        List<Book> books = bookRepository.findByPublicationYear(publicationYear);
+        if(books.isEmpty())
+            throw new BookNotFoundException("No Books were found that's published on : "+publicationYear);
+        return books;
     }
     public Author linkAuthor(Long author_id) {
         return authorRepository.findById(author_id)
@@ -53,6 +70,10 @@ public class BookService {
     }
     public Book getBook(Long id) {
         return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
+    }
+    public Author getAuthor(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
+        return book.getAuthor();
     }
     public Book updateBook(BookDto bookDto, Long id){
         Book book = new Book();
@@ -74,5 +95,9 @@ public class BookService {
     }
     public void deleteBook(Long id){
         bookRepository.deleteById(id);
+    }
+    public Set<Genre> getGenres(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
+        return book.getGenres();
     }
 }

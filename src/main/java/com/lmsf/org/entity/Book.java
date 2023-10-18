@@ -28,7 +28,6 @@ public class Book {
     @Column(name = "copies_available")
     private int copiesAvailable;
 
-    @JsonBackReference
     @ManyToOne
     private Author author;
 

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,8 +49,8 @@ public class GenreController {
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<Set<Book>> getBooksByGenre(@PathVariable Long id){
-        Set<Book> books = bookService.getBooksByGenre(id);
+    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable Long id){
+        List<Book> books = bookService.getBooksByGenre(id);
         if(books.isEmpty()){
             throw new BookNotFoundException("No books were found");
         }

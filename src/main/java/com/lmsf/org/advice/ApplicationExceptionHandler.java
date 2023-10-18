@@ -1,6 +1,5 @@
 package com.lmsf.org.advice;
 
-import com.lmsf.org.entity.Role;
 import com.lmsf.org.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -83,5 +81,12 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(MemberNotFoundException.class)
+    public Map<String, String> handleMemberNotFoundException(MemberNotFoundException memberNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", memberNotFoundException.getMessage());
+        return errors;
+    }
 
 }

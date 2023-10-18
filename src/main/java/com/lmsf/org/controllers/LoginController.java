@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/login")
@@ -32,6 +33,7 @@ public class LoginController {
                     loginDto.getPassword()
             ));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return ResponseEntity.ok(new ResponseLogin("Log in successful"));
         } catch (BadCredentialsException e){
             return new ResponseEntity<>(new ResponseLogin("Bad Credentials"), HttpStatus.BAD_REQUEST);

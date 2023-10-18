@@ -1,6 +1,7 @@
 package com.lmsf.org.service;
 
 import com.lmsf.org.entity.Member;
+import com.lmsf.org.exception.MemberNotFoundException;
 import com.lmsf.org.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
     public Member getMember(Long id){
-        return memberRepository.findById(id).get();
+        return memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException("Member not found with id : +id"+id));
     }
     public Member updateMember(Member member){
         return memberRepository.save(member);

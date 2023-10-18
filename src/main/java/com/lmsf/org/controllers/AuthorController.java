@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/authors")
 public class AuthorController {
     private final AuthorService authorService;
+
     @PostMapping
-    public ResponseEntity<Author> createBook(@RequestBody @Valid AuthorDto authorDto) {
+    public ResponseEntity<Author> createAuthor(@RequestBody @Valid AuthorDto authorDto) {
         Author author = authorService.createAuthor(authorDto);
         return new ResponseEntity<>(author, HttpStatus.CREATED);
     }
@@ -49,8 +49,8 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<Set<Book>> getBooksByAuthor(@PathVariable Long id){
-        Set<Book> books = authorService.getBooksByAuthor(id);
+    public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable Long id){
+        List<Book> books = authorService.getBooksByAuthor(id);
         if(books.isEmpty()){
             throw new BookNotFoundException("No books were found");
         }
