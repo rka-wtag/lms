@@ -4,6 +4,7 @@ import com.lmsf.org.dto.AuthorDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.GenreDeleteException;
 import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,14 @@ public class AuthorService {
         return bookRepository.findByAuthorId(id);
     }
     public void deleteAuthor(Long id){
+        if(!authorRepository.existsById(id)){
+            throw new AuthorNotFoundException("Author not found with id : "+id);
+        }
+        List<Book> books = bookRepository.findByAuthorId(id);
+
+        if(!books.isEmpty())
+            throw new GenreDeleteException("Cannot delete the Author with id '" + id + "' because it is associated with " + books.size() + " books.");
+
         authorRepository.deleteById(id);
     }
 

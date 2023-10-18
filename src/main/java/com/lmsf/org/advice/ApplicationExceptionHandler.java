@@ -89,4 +89,12 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(GenreDeleteException.class)
+    public Map<String, String> handleGenreDeleteException(GenreDeleteException genreDeleteException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", genreDeleteException.getMessage());
+        return errors;
+    }
+
 }
