@@ -24,6 +24,9 @@ public class GenreService {
         return genreRepository.save(genre);
     }
     public void deleteGenre(Long id){
+        if(!genreRepository.existsById(id)){
+            throw new GenreNotFoundException("Genre not found with id : "+id);
+        }
         List<Book> books = bookRepository.findByGenresId(id);
         if(!books.isEmpty())
             throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with " + books.size() + " books.");
