@@ -29,7 +29,6 @@ public class AuthorService {
         author.setEmail(authorDto.getEmail());
         return authorRepository.save(author);
     }
-
     public List<Author> fetchAuthors(){
         return authorRepository.findAll();
     }

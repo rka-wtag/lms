@@ -1,6 +1,5 @@
 package com.lmsf.org.config;
 
-import com.lmsf.org.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,6 +27,8 @@ public class SecurityConfig {
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/logout").permitAll()
                 .antMatchers(HttpMethod.POST).hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT).hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
