@@ -11,6 +11,7 @@ import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,5 +102,11 @@ public class BookService {
     public Set<Genre> getGenres(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         return book.getGenres();
+    }
+
+    public List<Book> getBooksByTitleAndPublicationYear(String title, int publicationYear) {
+        if(!bookRepository.existsByTitleAndPublicationYear(title, publicationYear))
+            throw new BookNotFoundException("No books were found");
+        return bookRepository.findByTitleAndPublicationYear(title, publicationYear);
     }
 }

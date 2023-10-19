@@ -4,6 +4,7 @@ import com.lmsf.org.dto.AuthorDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.ConstraintsViolationException;
 import com.lmsf.org.exception.GenreDeleteException;
 import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
@@ -20,6 +21,9 @@ public class AuthorService {
 
     public Author createAuthor(AuthorDto authorDto){
         Author author = new Author();
+        if(authorRepository.existsByEmail(authorDto.getEmail())){
+            throw new ConstraintsViolationException("Email already exists");
+        }
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
         author.setEmail(authorDto.getEmail());

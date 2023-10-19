@@ -9,11 +9,9 @@ import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -41,7 +39,10 @@ public class BookController {
         String title = bookSearchRequestDto.getTitle();
         int publicationYear = bookSearchRequestDto.getPublicationYear();
 
-        if(Objects.nonNull(title))
+        if(Objects.nonNull(title) && publicationYear > 0){
+            return ResponseEntity.ok(bookService.getBooksByTitleAndPublicationYear(title, publicationYear));
+        }
+        else if(Objects.nonNull(title))
             return ResponseEntity.ok(bookService.getBooksByTitle(title));
         else if(publicationYear > 0)
             return ResponseEntity.ok(bookService.getBooksByPublicationYear(publicationYear));

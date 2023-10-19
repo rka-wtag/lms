@@ -3,6 +3,7 @@ package com.lmsf.org.service;
 import com.lmsf.org.dto.GenreDto;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
+import com.lmsf.org.exception.ConstraintsViolationException;
 import com.lmsf.org.exception.GenreDeleteException;
 import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.repository.BookRepository;
@@ -20,7 +21,11 @@ public class GenreService {
 
     public Genre createGenre(GenreDto genreDto){
         Genre genre = new Genre();
-        genre.setName(genreDto.getName().toUpperCase());
+        String genreName = genreDto.getName().toUpperCase();
+        if(genreRepository.existsByName(genreName)){
+            throw new ConstraintsViolationException("Genre already exists");
+        }
+        genre.setName(genreName);
         return genreRepository.save(genre);
     }
     public void deleteGenre(Long id){

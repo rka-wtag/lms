@@ -1,6 +1,7 @@
 package com.lmsf.org.controllers;
 
 import com.lmsf.org.dto.RegisterDto;
+import com.lmsf.org.exception.ConstraintsViolationException;
 import com.lmsf.org.repository.UserRepository;
 import com.lmsf.org.service.RegistrationService;
 import com.lmsf.org.util.ResponseRegistration;
@@ -34,6 +35,6 @@ public class RegistrationController {
             return ResponseEntity.ok(new ResponseRegistration("Registration successful"));
         }
         else
-            return new ResponseEntity<>(new ResponseRegistration("username already exists"), HttpStatus.BAD_REQUEST);
+            throw new ConstraintsViolationException("Username already exists");
     }
 }

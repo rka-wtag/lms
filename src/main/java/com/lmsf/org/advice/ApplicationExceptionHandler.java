@@ -97,4 +97,12 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintsViolationException.class)
+    public Map<String, String> handleConstraintsViolationException(ConstraintsViolationException constraintsViolationException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", constraintsViolationException.getMessage());
+        return errors;
+    }
+
 }
