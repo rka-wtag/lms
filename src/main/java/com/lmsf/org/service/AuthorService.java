@@ -20,10 +20,10 @@ public class AuthorService {
     private final BookRepository bookRepository;
 
     public Author createAuthor(AuthorDto authorDto){
-        Author author = new Author();
         if(authorRepository.existsByEmail(authorDto.getEmail())){
             throw new ConstraintsViolationException("Email already exists");
         }
+        Author author = new Author();
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
         author.setEmail(authorDto.getEmail());
@@ -37,7 +37,7 @@ public class AuthorService {
         return authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+id));
     }
     public Author updateAuthor(AuthorDto authorDto, Long id){
-        Author author = new Author();
+        Author author;
         author = authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+id));
         author.setFirstName(authorDto.getFirstName());
         author.setLastName(authorDto.getLastName());
@@ -45,13 +45,13 @@ public class AuthorService {
         return authorRepository.save(author);
     }
     public List<Book> getBooksByAuthor(Long id){
-        return bookRepository.findByAuthorId(id);
+        return bookRepository.findByAuthorIdOrderById(id);
     }
     public void deleteAuthor(Long id){
         if(!authorRepository.existsById(id)){
             throw new AuthorNotFoundException("Author not found with id : "+id);
         }
-        List<Book> books = bookRepository.findByAuthorId(id);
+        List<Book> books = bookRepository.findByAuthorIdOrderById(id);
 
         if(!books.isEmpty())
             throw new GenreDeleteException("Cannot delete the Author with id '" + id + "' because it is associated with " + books.size() + " books.");

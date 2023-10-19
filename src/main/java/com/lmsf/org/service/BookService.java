@@ -11,10 +11,10 @@ import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,19 +48,26 @@ public class BookService {
         List<Book> books = bookRepository.findAll();
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found");
+
+        books.sort(new Comparator<Book>() {
+            @Override
+            public int compare(Book o1, Book o2) {
+                return o1.getId().compareTo(o2.getId());
+            }
+        });
         return books;
     }
     public List<Book> getBooksByGenre(Long id){
-        return bookRepository.findByGenresId(id);
+        return bookRepository.findByGenresIdOrderById(id);
     }
     public List<Book> getBooksByTitle(String title){
-        List<Book> books = bookRepository.findByTitle(title);
+        List<Book> books = bookRepository.findByTitleOrderById(title);
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found with name : "+title);
         return books;
     }
     public List<Book> getBooksByPublicationYear(int publicationYear){
-        List<Book> books = bookRepository.findByPublicationYear(publicationYear);
+        List<Book> books = bookRepository.findByPublicationYearOrderById(publicationYear);
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found that's published on : "+publicationYear);
         return books;
@@ -107,6 +114,6 @@ public class BookService {
     public List<Book> getBooksByTitleAndPublicationYear(String title, int publicationYear) {
         if(!bookRepository.existsByTitleAndPublicationYear(title, publicationYear))
             throw new BookNotFoundException("No books were found");
-        return bookRepository.findByTitleAndPublicationYear(title, publicationYear);
+        return bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear);
     }
 }

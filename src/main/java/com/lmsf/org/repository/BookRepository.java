@@ -9,10 +9,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Override
     boolean existsById(Long id);
     boolean existsByTitleAndPublicationYear(String title, int publicationYear);
-    List<Book> findByGenresId(Long genreId);
-    List<Book> findByAuthorId(Long id);
-    List<Book> findByTitle(String name);
-    List<Book> findByPublicationYear(int year);
-    List<Book> findByTitleAndPublicationYear(String title, int publicationYear);
+    List<Book> findByGenresIdOrderById(Long genreId);
+    List<Book> findByAuthorIdOrderById(Long id);
+    List<Book> findByTitleOrderById(String name);
+    List<Book> findByPublicationYearOrderById(int year);
+    List<Book> findByTitleAndPublicationYearOrderById(String title, int publicationYear);
 
 }

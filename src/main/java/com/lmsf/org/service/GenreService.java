@@ -11,6 +11,8 @@ import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class GenreService {
         if(!genreRepository.existsById(id)){
             throw new GenreNotFoundException("Genre not found with id : "+id);
         }
-        List<Book> books = bookRepository.findByGenresId(id);
+        List<Book> books = bookRepository.findByGenresIdOrderById(id);
         if(!books.isEmpty())
             throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with " + books.size() + " books.");
         genreRepository.deleteById(id);
@@ -47,7 +49,18 @@ public class GenreService {
         return genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
     }
     public List<Genre> fetchGenres(){
-        return genreRepository.findAll();
+        List<Genre> genres = genreRepository.findAll();
+        if(genres.isEmpty()){
+            throw new GenreNotFoundException("Currently Genre list is empty");
+        }
+        genres.sort(new Comparator<Genre>() {
+            @Override
+            public int compare(Genre o1, Genre o2) {
+                return (int) o1.getId() - (int) o2.getId();
+            }
+        });
+
+        return genres;
     }
 
 }

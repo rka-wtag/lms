@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/logout").permitAll()
-                .antMatchers(HttpMethod.POST).hasAuthority("USER")
+                .antMatchers(HttpMethod.POST).hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
