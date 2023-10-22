@@ -44,6 +44,9 @@ public class AuthorService {
         return authorRepository.save(author);
     }
     public List<Book> getBooksByAuthor(Long id){
+        if(!authorRepository.existsById(id)){
+            throw new AuthorNotFoundException("Author not found with id : "+id);
+        }
         return bookRepository.findByAuthorIdOrderById(id);
     }
     public void deleteAuthor(Long id){
