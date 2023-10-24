@@ -3,6 +3,7 @@ package com.lmsf.org.advice;
 import com.lmsf.org.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -102,6 +103,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleConstraintsViolationException(ConstraintsViolationException constraintsViolationException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", constraintsViolationException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public Map<String, String> handleUserNotFoundException(UsernameNotFoundException usernameNotFoundException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", usernameNotFoundException.getMessage());
         return errors;
     }
 
