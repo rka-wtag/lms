@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Set;
@@ -13,7 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDto {
+public class BookRequestDto {
     @NotNull(message = "Title shouldn't be null")
     @Size(min = 1, max = 255, message = "Title shouldn't be null")
     private String title;

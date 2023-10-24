@@ -1,6 +1,9 @@
 package com.lmsf.org.service;
 
-import com.lmsf.org.dto.BookDto;
+import com.lmsf.org.dto.AuthorResponseDto;
+import com.lmsf.org.dto.BookRequestDto;
+import com.lmsf.org.dto.BookResponseDto;
+import com.lmsf.org.dto.GenreResponseDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
@@ -11,6 +14,7 @@ import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +22,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -25,26 +30,28 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
+    private final ModelMapper modelMapper;
 
     @Transactional
-    public Book createBook(BookDto bookDto) {
-        Book book = new Book();
-        book.setTitle(bookDto.getTitle());
-        book.setCopiesAvailable(bookDto.getCopiesAvailable());
-        book.setPublicationYear((bookDto.getPublicationYear()));
-        book.setAuthor(linkAuthor(bookDto.getAuthorId()));
+    public BookResponseDto createBook(BookRequestDto bookRequestDto) {
+        Book book = modelMapper.map(bookRequestDto, Book.class);
+        Author author = authorRepository.findById(bookRequestDto.getAuthorId())
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+ bookRequestDto.getAuthorId()));
+        book.setAuthor(author);
         Set<Genre> genres = new HashSet<>();
 
-        for(Long genreId : bookDto.getGenreIds()){
+        for(Long genreId : bookRequestDto.getGenreIds()){
             Genre genre = genreRepository.findById(genreId)
                     .orElseThrow(() -> new GenreNotFoundException("genre not found with id : " +genreId));
             genres.add(genre);
         }
 
         book.setGenres(genres);
-        return bookRepository.save(book);
+        bookRepository.save(book);
+        return modelMapper.map(book, BookResponseDto.class);
     }
-    public List<Book> fetchBooks(){
+
+    public List<BookResponseDto> fetchBooks(){
         List<Book> books = bookRepository.findAll();
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found");
@@ -55,65 +62,93 @@ public class BookService {
                 return o1.getId().compareTo(o2.getId());
             }
         });
-        return books;
+
+        return books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDto.class))
+                .collect(Collectors.toList());
+
     }
-    public List<Book> getBooksByGenre(Long id){
-        return bookRepository.findByGenresIdOrderById(id);
+
+    public List<BookResponseDto> getBooksByGenre(Long id){
+        List<Book> books = bookRepository.findByGenresIdOrderById(id);
+        if(books.isEmpty()){
+            throw new BookNotFoundException("No books were found");
+        }
+        return books.stream().map(book -> modelMapper.map(book, BookResponseDto.class)).collect(Collectors.toList());
     }
-    public List<Book> getBooksByTitle(String title){
+
+    public List<BookResponseDto> getBooksByTitle(String title){
         List<Book> books = bookRepository.findByTitleOrderById(title);
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found with name : "+title);
-        return books;
+        return books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDto.class))
+                .collect(Collectors.toList());
     }
-    public List<Book> getBooksByPublicationYear(int publicationYear){
+
+    public List<BookResponseDto> getBooksByPublicationYear(int publicationYear){
         List<Book> books = bookRepository.findByPublicationYearOrderById(publicationYear);
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found that's published on : "+publicationYear);
-        return books;
+        return books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDto.class))
+                .collect(Collectors.toList());
     }
-    public Author linkAuthor(Long author_id) {
-        return authorRepository.findById(author_id)
-                .orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+author_id));
+
+    public BookResponseDto getBook(Long id) {
+        Book book =  bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
+        return modelMapper.map(book, BookResponseDto.class);
     }
-    public Book getBook(Long id) {
-        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
-    }
-    public Author getAuthor(Long id) {
+
+    public AuthorResponseDto getAuthor(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
-        return book.getAuthor();
+        Author author = book.getAuthor();
+        return modelMapper.map(author, AuthorResponseDto.class);
     }
-    public Book updateBook(BookDto bookDto, Long id){
+
+    public BookResponseDto updateBook(BookRequestDto bookRequestDto, Long id){
         Book book = new Book();
         book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
-        book.setTitle(bookDto.getTitle());
-        book.setCopiesAvailable(bookDto.getCopiesAvailable());
-        book.setPublicationYear((bookDto.getPublicationYear()));
-        book.setAuthor(linkAuthor(bookDto.getAuthorId()));
+        book.setTitle(bookRequestDto.getTitle());
+        book.setCopiesAvailable(bookRequestDto.getCopiesAvailable());
+        book.setPublicationYear((bookRequestDto.getPublicationYear()));
+        Author author = authorRepository.findById(bookRequestDto.getAuthorId())
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+ bookRequestDto.getAuthorId()));
+        book.setAuthor(author);
 
         Set<Genre> genres = new HashSet<>();
 
-        for(Long genreId : bookDto.getGenreIds()){
+        for(Long genreId : bookRequestDto.getGenreIds()){
             Genre genre = genreRepository.findById(genreId)
                     .orElseThrow(() -> new GenreNotFoundException("genre not found with id : id" +genreId));
             genres.add(genre);
         }
         book.setGenres(genres);
-        return bookRepository.save(book);
+        bookRepository.save(book);
+        return modelMapper.map(book, BookResponseDto.class);
     }
+
     public void deleteBook(Long id){
         if(!bookRepository.existsById(id))
             throw new BookNotFoundException("Book not found with id : "+id);
         bookRepository.deleteById(id);
     }
+
     public Set<Genre> getGenres(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         return book.getGenres();
     }
 
-    public List<Book> getBooksByTitleAndPublicationYear(String title, int publicationYear) {
+    public List<BookResponseDto> getBooksByTitleAndPublicationYear(String title, int publicationYear) {
         if(!bookRepository.existsByTitleAndPublicationYear(title, publicationYear))
             throw new BookNotFoundException("No books were found");
-        return bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear);
+        List<Book> books = bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear);
+        return books
+                .stream()
+                .map(book -> modelMapper.map(book, BookResponseDto.class))
+                .collect(Collectors.toList());
     }
 }

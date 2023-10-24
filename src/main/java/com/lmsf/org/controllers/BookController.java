@@ -1,9 +1,9 @@
 package com.lmsf.org.controllers;
 
-import com.lmsf.org.dto.BookDto;
+import com.lmsf.org.dto.AuthorResponseDto;
+import com.lmsf.org.dto.BookRequestDto;
+import com.lmsf.org.dto.BookResponseDto;
 import com.lmsf.org.dto.BookSearchRequestDto;
-import com.lmsf.org.entity.Author;
-import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody @Valid BookDto bookDto) {
-            return new ResponseEntity<>(bookService.createBook(bookDto), HttpStatus.CREATED);
+    public ResponseEntity<BookResponseDto> createBook(@RequestBody @Valid BookRequestDto bookRequestDto) {
+            return new ResponseEntity<>(bookService.createBook(bookRequestDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -34,7 +34,7 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> fetchBooks(@Valid BookSearchRequestDto bookSearchRequestDto) {
+    public ResponseEntity<List<BookResponseDto>> fetchBooks(@Valid BookSearchRequestDto bookSearchRequestDto) {
 
         String title = bookSearchRequestDto.getTitle();
         int publicationYear = bookSearchRequestDto.getPublicationYear();
@@ -51,23 +51,23 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@RequestBody @Valid BookDto bookDto, @PathVariable Long id) {
-        return ResponseEntity.ok(bookService.updateBook(bookDto, id));
+    public ResponseEntity<BookResponseDto> updateBook(@RequestBody @Valid BookRequestDto bookRequestDto, @PathVariable Long id) {
+        return ResponseEntity.ok(bookService.updateBook(bookRequestDto, id));
     }
 
     @GetMapping("/{id}")
-    public Book getBook(@PathVariable Long id) {
-        return bookService.getBook(id);
+    public ResponseEntity<BookResponseDto> getBook(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBook(id));
     }
 
     @GetMapping("/{id}/authors")
-    public Author getAuthor(@PathVariable Long id) {
-        return bookService.getAuthor(id);
+    public ResponseEntity<AuthorResponseDto> getAuthor(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getAuthor(id));
     }
 
     @GetMapping("/{id}/genres")
-    public Set<Genre> getGenres(@PathVariable Long id) {
-        return bookService.getGenres(id);
+    public ResponseEntity<Set<Genre>> getGenres(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getGenres(id));
     }
 
 }

@@ -1,9 +1,8 @@
 package com.lmsf.org.controllers;
 
-import com.lmsf.org.dto.GenreDto;
-import com.lmsf.org.entity.Book;
-import com.lmsf.org.entity.Genre;
-import com.lmsf.org.exception.BookNotFoundException;
+import com.lmsf.org.dto.BookResponseDto;
+import com.lmsf.org.dto.GenreRequestDto;
+import com.lmsf.org.dto.GenreResponseDto;
 import com.lmsf.org.service.BookService;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,8 @@ public class GenreController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Genre> createGenre(@RequestBody @Valid GenreDto genreDto) {
-        return new ResponseEntity<>(genreService.createGenre(genreDto), HttpStatus.CREATED);
+    public ResponseEntity<GenreResponseDto> createGenre(@RequestBody @Valid GenreRequestDto genreRequestDto) {
+        return new ResponseEntity<>(genreService.createGenre(genreRequestDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -34,27 +33,23 @@ public class GenreController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable Long id, @RequestBody Genre genre){
-        return ResponseEntity.ok(genreService.updateGenre(id, genre));
+    public ResponseEntity<GenreResponseDto> updateGenre(@PathVariable Long id, @RequestBody GenreRequestDto genreRequestDto){
+        return ResponseEntity.ok(genreService.updateGenre(id, genreRequestDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenre(@PathVariable Long id){
+    public ResponseEntity<GenreResponseDto> getGenre(@PathVariable Long id){
         return ResponseEntity.ok(genreService.getGenre(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Genre>> fetchGenres(){
+    public ResponseEntity<List<GenreResponseDto>> fetchGenres(){
         return ResponseEntity.ok(genreService.fetchGenres());
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable Long id){
-        List<Book> books = bookService.getBooksByGenre(id);
-        if(books.isEmpty()){
-            throw new BookNotFoundException("No books were found");
-        }
-        return ResponseEntity.ok(books);
+    public ResponseEntity<List<BookResponseDto>> getBooksByGenre(@PathVariable Long id){
+        return ResponseEntity.ok(bookService.getBooksByGenre(id));
     }
 
 }

@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreDto {
+public class GenreRequestDto {
     @Size(min = 1, max = 255, message = "Inavlid genre name")
     @Column(name = "name", nullable = false, unique = true)
     private String name;

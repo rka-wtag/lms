@@ -1,9 +1,8 @@
 package com.lmsf.org.controllers;
 
-import com.lmsf.org.dto.AuthorDto;
-import com.lmsf.org.entity.Author;
-import com.lmsf.org.entity.Book;
-import com.lmsf.org.exception.BookNotFoundException;
+import com.lmsf.org.dto.AuthorRequestDto;
+import com.lmsf.org.dto.AuthorResponseDto;
+import com.lmsf.org.dto.BookResponseDto;
 import com.lmsf.org.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,15 +19,13 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@RequestBody @Valid AuthorDto authorDto) {
-        Author author = authorService.createAuthor(authorDto);
-        return new ResponseEntity<>(author, HttpStatus.CREATED);
+    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody @Valid AuthorRequestDto authorRequestDto) {
+        return new ResponseEntity<>(authorService.createAuthor(authorRequestDto), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Author>> fetchAuthors() {
-        List<Author> authors = authorService.fetchAuthors();
-        return ResponseEntity.ok(authors);
+    public ResponseEntity<List<AuthorResponseDto>> fetchAuthors() {
+        return ResponseEntity.ok(authorService.fetchAuthors());
     }
 
     @DeleteMapping("/{id}")
@@ -38,22 +35,18 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@RequestBody @Valid AuthorDto authorDto, @PathVariable Long id) {
-        return ResponseEntity.ok(authorService.updateAuthor(authorDto, id));
+    public ResponseEntity<AuthorResponseDto> updateAuthor(@RequestBody @Valid AuthorRequestDto authorRequestDto, @PathVariable Long id) {
+        return ResponseEntity.ok(authorService.updateAuthor(authorRequestDto, id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthor(@PathVariable Long id) {
-        Author author = authorService.getAuthor(id);
-        return ResponseEntity.ok(author);
+    public ResponseEntity<AuthorResponseDto> getAuthor(@PathVariable Long id) {
+        return ResponseEntity.ok(authorService.getAuthor(id));
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<Book>> getBooksByAuthor(@PathVariable Long id){
-        List<Book> books = authorService.getBooksByAuthor(id);
-        if(books.isEmpty()){
-            throw new BookNotFoundException("No books were found");
-        }
+    public ResponseEntity<List<BookResponseDto>> getBooksByAuthor(@PathVariable Long id){
+        List<BookResponseDto> books = authorService.getBooksByAuthor(id);
         return ResponseEntity.ok(books);
     }
 

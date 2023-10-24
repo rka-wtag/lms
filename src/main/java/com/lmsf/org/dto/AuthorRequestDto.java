@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorDto {
+public class AuthorRequestDto {
     @NotNull(message = "The author should have last name")
     @Size(min = 1, max = 255, message = "The author should have last name")
     private String lastName;

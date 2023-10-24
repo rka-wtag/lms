@@ -1,6 +1,7 @@
 package com.lmsf.org.service;
 
-import com.lmsf.org.dto.GenreDto;
+import com.lmsf.org.dto.GenreRequestDto;
+import com.lmsf.org.dto.GenreResponseDto;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.exception.ConstraintsViolationException;
@@ -9,27 +10,31 @@ import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class GenreService {
     private final GenreRepository genreRepository;
     private final BookRepository bookRepository;
+    private final ModelMapper modelMapper;
 
-    public Genre createGenre(GenreDto genreDto){
+    public GenreResponseDto createGenre(GenreRequestDto genreRequestDto){
         Genre genre = new Genre();
-        String genreName = genreDto.getName().toUpperCase();
+        String genreName = genreRequestDto.getName().toUpperCase();
         if(genreRepository.existsByName(genreName)){
             throw new ConstraintsViolationException("Genre already exists");
         }
         genre.setName(genreName);
-        return genreRepository.save(genre);
+        genreRepository.save(genre);
+        return modelMapper.map(genre, GenreResponseDto.class);
     }
+
     public void deleteGenre(Long id){
         if(!genreRepository.existsById(id)){
             throw new GenreNotFoundException("Genre not found with id : "+id);
@@ -39,16 +44,23 @@ public class GenreService {
             throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with " + books.size() + " books.");
         genreRepository.deleteById(id);
     }
-    public Genre updateGenre(Long id, Genre genre){
+
+    public GenreResponseDto updateGenre(Long id, GenreRequestDto genreRequestDto){
+        if(genreRepository.existsByName(genreRequestDto.getName())){
+            throw new ConstraintsViolationException("Genre already exists");
+        }
         Genre newGenre = genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
-        newGenre.setName(genre.getName().toUpperCase());
+        newGenre.setName(genreRequestDto.getName().toUpperCase());
         genreRepository.save(newGenre);
-        return newGenre;
+        return modelMapper.map(newGenre, GenreResponseDto.class);
     }
-    public Genre getGenre(Long id){
-        return genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
+
+    public GenreResponseDto getGenre(Long id){
+        Genre genre = genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
+        return modelMapper.map(genre, GenreResponseDto.class);
     }
-    public List<Genre> fetchGenres(){
+
+    public List<GenreResponseDto> fetchGenres(){
         List<Genre> genres = genreRepository.findAll();
         if(genres.isEmpty()){
             throw new GenreNotFoundException("Currently Genre list is empty");
@@ -60,7 +72,7 @@ public class GenreService {
             }
         });
 
-        return genres;
+        return genres.stream().map(genre -> modelMapper.map(genre, GenreResponseDto.class)).collect(Collectors.toList());
     }
 
 }
