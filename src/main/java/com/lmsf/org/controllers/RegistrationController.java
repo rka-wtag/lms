@@ -26,15 +26,7 @@ public class RegistrationController {
 
     @PostMapping
     public ResponseEntity<RegistrationResponseDto> signUp(@RequestBody @Valid RegisterDto registerDto){
-
-        if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword())){
-            return new ResponseEntity<>(new RegistrationResponseDto("password does not match"), HttpStatus.BAD_REQUEST);
-        }
-        if(!userRepository.existsByUsername(registerDto.getUsername())) {
-            registrationService.register(registerDto);
-            return ResponseEntity.ok(new RegistrationResponseDto("Registration successful"));
-        }
-        else
-            throw new ConstraintsViolationException("Username already exists");
+        registrationService.register(registerDto);
+        return ResponseEntity.ok(new RegistrationResponseDto("Registration successful"));
     }
 }

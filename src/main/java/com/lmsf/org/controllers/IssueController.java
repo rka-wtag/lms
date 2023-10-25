@@ -1,6 +1,7 @@
 package com.lmsf.org.controllers;
 
 import com.lmsf.org.dto.IssueRequestDto;
+import com.lmsf.org.dto.IssueResponseDto;
 import com.lmsf.org.entity.IssuedBook;
 import com.lmsf.org.service.IssueService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class IssueController {
     private final IssueService issueService;
 
     @PostMapping
-    public ResponseEntity<IssuedBook> issuedBooks(
+    public ResponseEntity<IssueResponseDto> issuedBooks(
             @RequestBody @Valid IssueRequestDto issueRequestDto,
             @RequestHeader(value = "Authorization") String authHeader
     ){;

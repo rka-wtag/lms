@@ -114,4 +114,20 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordMatchingException.class)
+    public Map<String, String> handlePasswordMatchingException(PasswordMatchingException passwordMatchingException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", passwordMatchingException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotAvailableException.class)
+    public Map<String, String> handleBookNotAvailableException(BookNotAvailableException bookNotAvailableException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", bookNotAvailableException.getMessage());
+        return errors;
+    }
+
 }
