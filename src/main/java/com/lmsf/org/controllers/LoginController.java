@@ -41,9 +41,7 @@ public class LoginController {
             throw new UsernameNotFoundException("Bad Credentials");
         }
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginDto.getUsername());
-
         final String jwt = jwtService.generateToken(userDetails);
-
         return ResponseEntity.ok(new LoginResponseDto(jwt));
     }
 

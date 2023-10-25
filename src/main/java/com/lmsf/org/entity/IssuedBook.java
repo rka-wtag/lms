@@ -10,14 +10,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class BorrowedBooks {
+public class IssuedBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
     private Book book;
+
     @ManyToOne
-    private Member member;
+    private UserInfo user;
 
 }
