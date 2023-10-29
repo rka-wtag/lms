@@ -122,11 +122,35 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BookNotAvailableException.class)
     public Map<String, String> handleBookNotAvailableException(BookNotAvailableException bookNotAvailableException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", bookNotAvailableException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BookBorrowException.class)
+    public Map<String, String> handleBookBorrowException(BookBorrowException bookBorrowException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", bookBorrowException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BookReturnException.class)
+    public Map<String, String> handleBookReturnException(BookReturnException bookReturnException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", bookReturnException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BookDeleteException.class)
+    public Map<String, String> handleBookDeleteException(BookDeleteException bookDeleteException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", bookDeleteException.getMessage());
         return errors;
     }
 

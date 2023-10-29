@@ -1,5 +1,6 @@
 package com.lmsf.org.service;
 
+import com.lmsf.org.config.MyCustomUserDetails;
 import com.lmsf.org.entity.Role;
 import com.lmsf.org.entity.UserInfo;
 import com.lmsf.org.repository.UserRepository;
@@ -25,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserInfo user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        return new User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
+        return new MyCustomUserDetails(user.getId(), user.getUsername(), user.getName(), user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
 
     private Collection<GrantedAuthority> mapRolesToAuthorities(List<Role> roles){

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 public class IssueResponseDto {
     private Long id;
-    private UserResponseDto issuer;
+    private String issuer;
     private BookResponseDto book;
 
 }

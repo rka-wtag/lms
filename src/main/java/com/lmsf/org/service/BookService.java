@@ -8,11 +8,13 @@ import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.exception.AuthorNotFoundException;
+import com.lmsf.org.exception.BookDeleteException;
 import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.exception.GenreNotFoundException;
 import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
+import com.lmsf.org.repository.IssuedBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -30,11 +32,15 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
+    private final IssuedBookRepository issuedBookRepository;
     private final ModelMapper modelMapper;
 
     @Transactional
     public BookResponseDto createBook(BookRequestDto bookRequestDto) {
         Book book = modelMapper.map(bookRequestDto, Book.class);
+
+        book.setId(null);
+
         Author author = authorRepository.findById(bookRequestDto.getAuthorId())
                 .orElseThrow(() -> new AuthorNotFoundException("Author not found with id : "+ bookRequestDto.getAuthorId()));
         book.setAuthor(author);
@@ -134,6 +140,10 @@ public class BookService {
     public void deleteBook(Long id){
         if(!bookRepository.existsById(id))
             throw new BookNotFoundException("Book not found with id : "+id);
+
+        if(issuedBookRepository.existsByBookId(id)){
+            throw new BookDeleteException("The book has already been issued by an user");
+        }
         bookRepository.deleteById(id);
     }
 

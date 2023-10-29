@@ -21,20 +21,18 @@ public class RegistrationService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;;
+    private final PasswordEncoder passwordEncoder;
 
     public void register(RegisterDto registerDto){
 
-        if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword())){
+        if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword()))
             throw new PasswordMatchingException("password does not match");
-        }
-        if(userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new ConstraintsViolationException("username already exists");
-        }
 
-        if(userRepository.existsByEmail(registerDto.getEmail())) {
+        if(userRepository.existsByUsername(registerDto.getUsername()))
+            throw new ConstraintsViolationException("username already exists");
+
+        if(userRepository.existsByEmail(registerDto.getEmail()))
             throw new ConstraintsViolationException("email already exists");
-        }
 
         UserInfo user = new UserInfo();
         user.setUsername(registerDto.getUsername());
