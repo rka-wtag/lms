@@ -1,9 +1,6 @@
 package com.lmsf.org.controllers;
 
-import com.lmsf.org.dto.AuthorResponseDto;
-import com.lmsf.org.dto.BookRequestDto;
-import com.lmsf.org.dto.BookResponseDto;
-import com.lmsf.org.dto.BookSearchRequestDto;
+import com.lmsf.org.dto.*;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -39,14 +36,29 @@ public class BookController {
         String title = bookSearchRequestDto.getTitle();
         int publicationYear = bookSearchRequestDto.getPublicationYear();
 
-        if(Objects.nonNull(title) && publicationYear > 0){
-            return ResponseEntity.ok(bookService.getBooksByTitleAndPublicationYear(title, publicationYear));
-        }
+        if(Objects.nonNull(title) && publicationYear > 0)
+            return ResponseEntity.ok(bookService.getBooksByTitleAndPublicationYear(
+                    title,
+                    publicationYear,
+                    bookSearchRequestDto.getPageNo(),
+                    bookSearchRequestDto.getPageSize() > 0 ? bookSearchRequestDto.getPageSize() : 10
+            ));
         else if(Objects.nonNull(title))
-            return ResponseEntity.ok(bookService.getBooksByTitle(title));
+            return ResponseEntity.ok(bookService.getBooksByTitle(
+                    title,
+                    bookSearchRequestDto.getPageNo(),
+                    bookSearchRequestDto.getPageSize() > 0 ? bookSearchRequestDto.getPageSize() : 10
+            ));
         else if(publicationYear > 0)
-            return ResponseEntity.ok(bookService.getBooksByPublicationYear(publicationYear));
-        return ResponseEntity.ok(bookService.fetchBooks());
+            return ResponseEntity.ok(bookService.getBooksByPublicationYear(
+                    publicationYear,
+                    bookSearchRequestDto.getPageNo(),
+                    bookSearchRequestDto.getPageSize() > 0 ? bookSearchRequestDto.getPageSize() : 10
+            ));
+        return ResponseEntity.ok(bookService.fetchBooks(
+                bookSearchRequestDto.getPageNo(),
+                bookSearchRequestDto.getPageSize() > 0 ? bookSearchRequestDto.getPageSize() : 10
+        ));
 
     }
 
@@ -66,7 +78,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}/genres")
-    public ResponseEntity<Set<Genre>> getGenres(@PathVariable Long id) {
+    public ResponseEntity<Set<Genre>> getGenres(@PathVariable Long id, @Valid PageRequestDto pageRequestDto) {
         return ResponseEntity.ok(bookService.getGenres(id));
     }
 

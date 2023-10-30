@@ -15,9 +15,14 @@ import com.lmsf.org.repository.IssuedBookRepository;
 import com.lmsf.org.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +37,7 @@ public class IssuedBooksService {
     private final ModelMapper modelMapper;
 
 
+    @Transactional
     public IssueResponseDto issueBooks(IssueRequestDto issueRequestDto) {
 
         MyCustomUserDetails myCustomUserDetails = (MyCustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -41,12 +47,9 @@ public class IssuedBooksService {
         Book book = bookRepository.findById(issueRequestDto.getBookId())
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id : "+issueRequestDto.getBookId()));
 
-        List<IssuedBook> issuedBooks =  issuedBookRepository.findByBookId(issueRequestDto.getBookId());
-
-        if(!issuedBooks.isEmpty()){
+        if(issuedBookRepository.existsByBookIdAndUserId(issueRequestDto.getBookId(), myCustomUserDetails.getId())){
             throw new BookBorrowException("You already have one copy of this book");
         }
-
         if(book.getCopiesAvailable() == 0){
             throw new BookNotAvailableException("Oops!! no copies available. Try issuing another book");
         }
@@ -62,27 +65,31 @@ public class IssuedBooksService {
         return issueResponseDto;
     }
 
-    public List<IssueResponseDto> fetchIssuedBooks() {
+    @Transactional(readOnly = true)
+    public List<IssueResponseDto> fetchIssuedBooks(int pageNo, int pageSize) {
+
         MyCustomUserDetails myCustomUserDetails = (MyCustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Long id = myCustomUserDetails.getId();
-        List<IssuedBook> issuedBook =  issuedBookRepository.findByUserId(id);
-
-        if(issuedBook.isEmpty()){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<IssuedBook> pageIssuedBooks =  issuedBookRepository.findByUserId(id, pageable);
+        List<IssuedBook> issuedBooks = pageIssuedBooks.getContent();
+        if(issuedBooks.isEmpty()){
             throw new BookNotFoundException("You dont have any issued books");
         }
-        List<IssueResponseDto> issueResponseDtoList = issuedBook.stream().map(book -> modelMapper.map(book, IssueResponseDto.class)).collect(Collectors.toList());
+        List<IssueResponseDto> issueResponseDtoList = issuedBooks.stream().map(book -> modelMapper.map(book, IssueResponseDto.class)).collect(Collectors.toList());
 
         return issueResponseDtoList.stream().peek(book -> book.setIssuer(myCustomUserDetails.getName())).collect(Collectors.toList());
     }
 
-
-    private UserInfo getUserDetails(String username) {
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public UserInfo getUserDetails(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 
 
+    @Transactional
     public void returnBooks(Long id) {
         IssuedBook issuedBook = issuedBookRepository.findById(id).orElseThrow(() -> new BookReturnException("Enter a valid issued-book id"));
         Book book = bookRepository.findById(issuedBook.getBook().getId())

@@ -1,13 +1,14 @@
 package com.lmsf.org.repository;
 
 import com.lmsf.org.entity.IssuedBook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface IssuedBookRepository extends JpaRepository<IssuedBook, Long> {
-    List<IssuedBook> findByUserId(Long user_id);
-    List<IssuedBook> findByBookId(Long bookId);
+    Page<IssuedBook> findByUserId(Long user_id, Pageable pageable);
+
     boolean existsById(Long id);
     boolean existsByBookId(Long id);
+    boolean existsByBookIdAndUserId(Long book_id, Long user_id);
 }

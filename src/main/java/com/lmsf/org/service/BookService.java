@@ -3,7 +3,6 @@ package com.lmsf.org.service;
 import com.lmsf.org.dto.AuthorResponseDto;
 import com.lmsf.org.dto.BookRequestDto;
 import com.lmsf.org.dto.BookResponseDto;
-import com.lmsf.org.dto.GenreResponseDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
@@ -17,10 +16,12 @@ import com.lmsf.org.repository.GenreRepository;
 import com.lmsf.org.repository.IssuedBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,17 +58,15 @@ public class BookService {
         return modelMapper.map(book, BookResponseDto.class);
     }
 
-    public List<BookResponseDto> fetchBooks(){
-        List<Book> books = bookRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<BookResponseDto> fetchBooks(int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> pageBooks = bookRepository.findAll(pageable);
+
+        List<Book> books = pageBooks.getContent();
+
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found");
-
-        books.sort(new Comparator<Book>() {
-            @Override
-            public int compare(Book o1, Book o2) {
-                return o1.getId().compareTo(o2.getId());
-            }
-        });
 
         return books
                 .stream()
@@ -76,26 +75,38 @@ public class BookService {
 
     }
 
-    public List<BookResponseDto> getBooksByGenre(Long id){
-        List<Book> books = bookRepository.findByGenresIdOrderById(id);
+    @Transactional(readOnly = true)
+    public List<BookResponseDto> getBooksByGenre(Long id, int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> pageBooks = bookRepository.findByGenresIdOrderById(id, pageable);
+        List<Book> books = pageBooks.getContent();
+
         if(books.isEmpty()){
             throw new BookNotFoundException("No books were found");
         }
         return books.stream().map(book -> modelMapper.map(book, BookResponseDto.class)).collect(Collectors.toList());
     }
 
-    public List<BookResponseDto> getBooksByTitle(String title){
-        List<Book> books = bookRepository.findByTitleOrderById(title);
+    @Transactional(readOnly = true)
+    public List<BookResponseDto> getBooksByTitle(String title, int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> pageBooks = bookRepository.findByTitleOrderById(title, pageable);
+        List<Book> books = pageBooks.getContent();
+
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found with name : "+title);
+
         return books
                 .stream()
                 .map(book -> modelMapper.map(book, BookResponseDto.class))
                 .collect(Collectors.toList());
     }
 
-    public List<BookResponseDto> getBooksByPublicationYear(int publicationYear){
-        List<Book> books = bookRepository.findByPublicationYearOrderById(publicationYear);
+    @Transactional(readOnly = true)
+    public List<BookResponseDto> getBooksByPublicationYear(int publicationYear, int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> pageBooks = bookRepository.findByPublicationYearOrderById(publicationYear, pageable);
+        List<Book> books = pageBooks.getContent();
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found that's published on : "+publicationYear);
         return books
@@ -104,20 +115,22 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public BookResponseDto getBook(Long id) {
         Book book =  bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         return modelMapper.map(book, BookResponseDto.class);
     }
 
+    @Transactional(readOnly = true)
     public AuthorResponseDto getAuthor(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         Author author = book.getAuthor();
         return modelMapper.map(author, AuthorResponseDto.class);
     }
 
+    @Transactional
     public BookResponseDto updateBook(BookRequestDto bookRequestDto, Long id){
-        Book book = new Book();
-        book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         book.setTitle(bookRequestDto.getTitle());
         book.setCopiesAvailable(bookRequestDto.getCopiesAvailable());
         book.setPublicationYear((bookRequestDto.getPublicationYear()));
@@ -137,6 +150,7 @@ public class BookService {
         return modelMapper.map(book, BookResponseDto.class);
     }
 
+    @Transactional
     public void deleteBook(Long id){
         if(!bookRepository.existsById(id))
             throw new BookNotFoundException("Book not found with id : "+id);
@@ -147,15 +161,21 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public Set<Genre> getGenres(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with id : "+id));
         return book.getGenres();
     }
 
-    public List<BookResponseDto> getBooksByTitleAndPublicationYear(String title, int publicationYear) {
+    @Transactional(readOnly = true)
+    public List<BookResponseDto> getBooksByTitleAndPublicationYear(String title, int publicationYear, int pageNo, int pageSize) {
+
         if(!bookRepository.existsByTitleAndPublicationYear(title, publicationYear))
             throw new BookNotFoundException("No books were found");
-        List<Book> books = bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear);
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> pageBooks = bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear, pageable);
+        List<Book> books = pageBooks.getContent();
         return books
                 .stream()
                 .map(book -> modelMapper.map(book, BookResponseDto.class))

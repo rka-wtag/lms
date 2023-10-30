@@ -2,6 +2,7 @@ package com.lmsf.org.controllers;
 
 import com.lmsf.org.dto.IssueRequestDto;
 import com.lmsf.org.dto.IssueResponseDto;
+import com.lmsf.org.dto.PageRequestDto;
 import com.lmsf.org.service.IssuedBooksService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,11 @@ public class IssuedBookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<IssueResponseDto>> fetchIssuedBooks(){
-        return ResponseEntity.ok(issuedBooksService.fetchIssuedBooks());
+    public ResponseEntity<List<IssueResponseDto>> fetchIssuedBooks(@Valid PageRequestDto pageRequestDto){
+        return ResponseEntity.ok(issuedBooksService.fetchIssuedBooks(
+                pageRequestDto.getPageNo(),
+                pageRequestDto.getPageSize()
+        ));
     }
 
     @DeleteMapping("/{id}")

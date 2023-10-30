@@ -11,6 +11,7 @@ import com.lmsf.org.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -23,6 +24,7 @@ public class RegistrationService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public void register(RegisterDto registerDto){
 
         if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword()))

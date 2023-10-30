@@ -2,7 +2,6 @@ package com.lmsf.org.service;
 
 import com.lmsf.org.dto.GenreRequestDto;
 import com.lmsf.org.dto.GenreResponseDto;
-import com.lmsf.org.entity.Book;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.exception.ConstraintsViolationException;
 import com.lmsf.org.exception.GenreDeleteException;
@@ -11,9 +10,12 @@ import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ public class GenreService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
 
+    @Transactional
     public GenreResponseDto createGenre(GenreRequestDto genreRequestDto){
         Genre genre = new Genre();
         String genreName = genreRequestDto.getName().toUpperCase();
@@ -35,16 +38,18 @@ public class GenreService {
         return modelMapper.map(genre, GenreResponseDto.class);
     }
 
+    @Transactional
     public void deleteGenre(Long id){
         if(!genreRepository.existsById(id)){
             throw new GenreNotFoundException("Genre not found with id : "+id);
         }
-        List<Book> books = bookRepository.findByGenresIdOrderById(id);
-        if(!books.isEmpty())
-            throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with " + books.size() + " books.");
+
+        if(!bookRepository.existsByGenresId(id))
+            throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with books.");
         genreRepository.deleteById(id);
     }
 
+    @Transactional
     public GenreResponseDto updateGenre(Long id, GenreRequestDto genreRequestDto){
         if(genreRepository.existsByName(genreRequestDto.getName())){
             throw new ConstraintsViolationException("Genre already exists");
@@ -55,23 +60,21 @@ public class GenreService {
         return modelMapper.map(newGenre, GenreResponseDto.class);
     }
 
+    @Transactional(readOnly = true)
     public GenreResponseDto getGenre(Long id){
         Genre genre = genreRepository.findById(id).orElseThrow(() -> new GenreNotFoundException("Genre not found with id : "+id));
         return modelMapper.map(genre, GenreResponseDto.class);
     }
 
-    public List<GenreResponseDto> fetchGenres(){
-        List<Genre> genres = genreRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<GenreResponseDto> fetchGenres(int pageNo, int pageSize){
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Genre> pageGenres = genreRepository.findAll(pageable);
+        List<Genre> genres = pageGenres.getContent();
+
         if(genres.isEmpty()){
             throw new GenreNotFoundException("Currently Genre list is empty");
         }
-        genres.sort(new Comparator<Genre>() {
-            @Override
-            public int compare(Genre o1, Genre o2) {
-                return (int) o1.getId() - (int) o2.getId();
-            }
-        });
-
         return genres.stream().map(genre -> modelMapper.map(genre, GenreResponseDto.class)).collect(Collectors.toList());
     }
 

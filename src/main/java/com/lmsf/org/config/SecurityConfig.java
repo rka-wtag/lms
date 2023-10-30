@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/logout").permitAll()
+                .antMatchers(HttpMethod.POST, "/issued-books").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers(HttpMethod.POST).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.PUT).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")

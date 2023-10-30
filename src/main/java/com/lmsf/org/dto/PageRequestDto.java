@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookSearchRequestDto {
-    private String title;
-    private int publicationYear;
-    private int pageNo;
-    private int pageSize;
+public class PageRequestDto {
+    private int pageNo = 0;
+    private int pageSize = 10;
 }

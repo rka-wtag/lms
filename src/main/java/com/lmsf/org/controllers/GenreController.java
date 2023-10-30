@@ -3,6 +3,7 @@ package com.lmsf.org.controllers;
 import com.lmsf.org.dto.BookResponseDto;
 import com.lmsf.org.dto.GenreRequestDto;
 import com.lmsf.org.dto.GenreResponseDto;
+import com.lmsf.org.dto.PageRequestDto;
 import com.lmsf.org.service.BookService;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +44,20 @@ public class GenreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GenreResponseDto>> fetchGenres(){
-        return ResponseEntity.ok(genreService.fetchGenres());
+    public ResponseEntity<List<GenreResponseDto>> fetchGenres(@Valid PageRequestDto pageRequestDto){
+        return ResponseEntity.ok(genreService.fetchGenres(
+                pageRequestDto.getPageNo(),
+                pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10
+        ));
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<BookResponseDto>> getBooksByGenre(@PathVariable Long id){
-        return ResponseEntity.ok(bookService.getBooksByGenre(id));
+    public ResponseEntity<List<BookResponseDto>> getBooksByGenre(@PathVariable Long id, @Valid PageRequestDto pageRequestDto){
+        return ResponseEntity.ok(bookService.getBooksByGenre(
+                id,
+                pageRequestDto.getPageNo(),
+                pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10
+        ));
     }
 
 }
