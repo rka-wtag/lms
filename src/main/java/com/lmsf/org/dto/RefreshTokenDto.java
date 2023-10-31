@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageRequestDto {
-    private int pageNo = 0;
-    private int pageSize = 10;
-    private String sortingField;
+public class RefreshTokenDto {
+    private String token;
 }

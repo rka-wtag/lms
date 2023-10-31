@@ -2,6 +2,7 @@ package com.lmsf.org.advice;
 
 import com.lmsf.org.exception.*;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -151,6 +152,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleBookDeleteException(BookDeleteException bookDeleteException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", bookDeleteException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PropertyReferenceException.class)
+    public Map<String, String> handlePropertyReferenceException(PropertyReferenceException propertyReferenceException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", propertyReferenceException.getMessage());
         return errors;
     }
 

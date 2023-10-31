@@ -27,7 +27,8 @@ public class IssuedBookController {
     public ResponseEntity<List<IssueResponseDto>> fetchIssuedBooks(@Valid PageRequestDto pageRequestDto){
         return ResponseEntity.ok(issuedBooksService.fetchIssuedBooks(
                 pageRequestDto.getPageNo(),
-                pageRequestDto.getPageSize()
+                pageRequestDto.getPageSize() == 0 ? 10 : pageRequestDto.getPageSize(),
+                pageRequestDto.getSortingField() == null ? "id" : pageRequestDto.getSortingField()
         ));
     }
 

@@ -45,10 +45,11 @@ public class GenreController {
 
     @GetMapping
     public ResponseEntity<List<GenreResponseDto>> fetchGenres(@Valid PageRequestDto pageRequestDto){
-        return ResponseEntity.ok(genreService.fetchGenres(
-                pageRequestDto.getPageNo(),
-                pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10
-        ));
+            return ResponseEntity.ok(genreService.fetchGenres(
+                    pageRequestDto.getPageNo(),
+                    pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,
+                    pageRequestDto.getSortingField() == null ? "name" : pageRequestDto.getSortingField()
+            ));
     }
 
     @GetMapping("/{id}/books")
@@ -56,7 +57,8 @@ public class GenreController {
         return ResponseEntity.ok(bookService.getBooksByGenre(
                 id,
                 pageRequestDto.getPageNo(),
-                pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10
+                pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,
+                pageRequestDto.getSortingField() == null ? "id" : pageRequestDto.getSortingField()
         ));
     }
 

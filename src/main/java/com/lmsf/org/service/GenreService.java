@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,9 +68,9 @@ public class GenreService {
     }
 
     @Transactional(readOnly = true)
-    public List<GenreResponseDto> fetchGenres(int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Genre> pageGenres = genreRepository.findAll(pageable);
+    public List<GenreResponseDto> fetchGenres(int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Genre> pageGenres = genreRepository.findAll(PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Genre> genres = pageGenres.getContent();
 
         if(genres.isEmpty()){

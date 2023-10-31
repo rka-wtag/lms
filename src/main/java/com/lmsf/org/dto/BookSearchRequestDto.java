@@ -12,4 +12,5 @@ public class BookSearchRequestDto {
     private int publicationYear;
     private int pageNo;
     private int pageSize;
+    private String sortingField;
 }

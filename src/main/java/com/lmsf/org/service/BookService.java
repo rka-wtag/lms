@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,9 +60,9 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> fetchBooks(int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findAll(pageable);
+    public List<BookResponseDto> fetchBooks(int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findAll(PageRequest.of(pageNo, pageSize).withSort(sort));
 
         List<Book> books = pageBooks.getContent();
 
@@ -76,9 +77,9 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByGenre(Long id, int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findByGenresIdOrderById(id, pageable);
+    public List<BookResponseDto> getBooksByGenre(Long id, int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findByGenresId(id, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Book> books = pageBooks.getContent();
 
         if(books.isEmpty()){
@@ -88,9 +89,9 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByTitle(String title, int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findByTitleOrderById(title, pageable);
+    public List<BookResponseDto> getBooksByTitle(String title, int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findByTitle(title, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Book> books = pageBooks.getContent();
 
         if(books.isEmpty())
@@ -103,9 +104,9 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByPublicationYear(int publicationYear, int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findByPublicationYearOrderById(publicationYear, pageable);
+    public List<BookResponseDto> getBooksByPublicationYear(int publicationYear, int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findByPublicationYear(publicationYear, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Book> books = pageBooks.getContent();
         if(books.isEmpty())
             throw new BookNotFoundException("No Books were found that's published on : "+publicationYear);
@@ -168,13 +169,13 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByTitleAndPublicationYear(String title, int publicationYear, int pageNo, int pageSize) {
+    public List<BookResponseDto> getBooksByTitleAndPublicationYear(String title, int publicationYear, int pageNo, int pageSize, String field) {
 
         if(!bookRepository.existsByTitleAndPublicationYear(title, publicationYear))
             throw new BookNotFoundException("No books were found");
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findByTitleAndPublicationYearOrderById(title, publicationYear, pageable);
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findByTitleAndPublicationYear(title,publicationYear, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Book> books = pageBooks.getContent();
         return books
                 .stream()

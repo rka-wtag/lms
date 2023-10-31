@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +38,9 @@ public class AuthorService {
         return modelMapper.map(authorRepository.save(author), AuthorResponseDto.class);
     }
 
-    @Transactional(readOnly = true)
-    public List<AuthorResponseDto> fetchAuthors(int pageNo, int pageSize){
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-
-        Page<Author> pageAuthors = authorRepository.findAll(pageable);
+    public List<AuthorResponseDto> fetchAuthors(int pageNo, int pageSize, String field){
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Author> pageAuthors = authorRepository.findAll(PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Author> authors = pageAuthors.getContent();
 
         if(authors.isEmpty()){
@@ -67,13 +65,15 @@ public class AuthorService {
         authorRepository.save(author);
         return modelMapper.map(author, AuthorResponseDto.class);
     }
+
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByAuthor(Long id, int pageNo, int pageSize){
+    public List<BookResponseDto> getBooksByAuthor(Long id, int pageNo, int pageSize, String field){
+
         if(!authorRepository.existsById(id)){
             throw new AuthorNotFoundException("Author not found with id : "+id);
         }
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Book> pageBooks = bookRepository.findByAuthorIdOrderById(id, pageable);
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Page<Book> pageBooks = bookRepository.findByAuthorId(id, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<Book> books= pageBooks.getContent();
 
         if(books.isEmpty()){

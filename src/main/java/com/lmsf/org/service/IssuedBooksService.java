@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -66,13 +66,12 @@ public class IssuedBooksService {
     }
 
     @Transactional(readOnly = true)
-    public List<IssueResponseDto> fetchIssuedBooks(int pageNo, int pageSize) {
+    public List<IssueResponseDto> fetchIssuedBooks(int pageNo, int pageSize, String field) {
 
         MyCustomUserDetails myCustomUserDetails = (MyCustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
         Long id = myCustomUserDetails.getId();
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<IssuedBook> pageIssuedBooks =  issuedBookRepository.findByUserId(id, pageable);
+        Page<IssuedBook> pageIssuedBooks =  issuedBookRepository.findByUserId(id, PageRequest.of(pageNo, pageSize).withSort(sort));
         List<IssuedBook> issuedBooks = pageIssuedBooks.getContent();
         if(issuedBooks.isEmpty()){
             throw new BookNotFoundException("You dont have any issued books");
