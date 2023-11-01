@@ -4,6 +4,7 @@ import com.lmsf.org.dto.*;
 import com.lmsf.org.entity.Genre;
 import com.lmsf.org.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookResponseDto>> fetchBooks(@Valid BookSearchRequestDto bookSearchRequestDto) {
+    public ResponseEntity<Page<BookResponseDto>> fetchBooks(@Valid BookSearchRequestDto bookSearchRequestDto) {
 
         String title = bookSearchRequestDto.getTitle();
         int publicationYear = bookSearchRequestDto.getPublicationYear();
@@ -82,8 +83,13 @@ public class BookController {
     }
 
     @GetMapping("/{id}/genres")
-    public ResponseEntity<Set<Genre>> getGenres(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getGenres(id));
+    public ResponseEntity<Page<Genre>> getGenres(@PathVariable Long id, @Valid BookSearchRequestDto bookSearchRequestDto) {
+        return ResponseEntity.ok(bookService.getGenres(
+                id,
+                bookSearchRequestDto.getPageNo(),
+                bookSearchRequestDto.getPageSize() > 0 ? bookSearchRequestDto.getPageSize() : 10,
+                bookSearchRequestDto.getSortingField() == null ? "id" : bookSearchRequestDto.getSortingField()
+        ));
     }
 
 }

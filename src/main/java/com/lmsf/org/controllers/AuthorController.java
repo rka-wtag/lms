@@ -6,6 +6,7 @@ import com.lmsf.org.dto.BookResponseDto;
 import com.lmsf.org.dto.PageRequestDto;
 import com.lmsf.org.service.AuthorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AuthorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorResponseDto>> fetchAuthors(@Valid PageRequestDto pageRequestDto) {
+    public ResponseEntity<Page<AuthorResponseDto>> fetchAuthors(@Valid PageRequestDto pageRequestDto) {
             return ResponseEntity.ok(authorService.fetchAuthors(
                     pageRequestDto.getPageNo(),
                     pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,
@@ -51,8 +52,8 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<BookResponseDto>> getBooksByAuthor(@PathVariable Long id, @Valid PageRequestDto pageRequestDto){
-            List<BookResponseDto> books = authorService.getBooksByAuthor(
+    public ResponseEntity<Page<BookResponseDto>> getBooksByAuthor(@PathVariable Long id, @Valid PageRequestDto pageRequestDto){
+            Page<BookResponseDto> books = authorService.getBooksByAuthor(
                     id,
                     pageRequestDto.getPageNo(),
                     pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,

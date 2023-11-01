@@ -36,14 +36,19 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateAccessToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername(), SecurityConstants.JWT_SHORT_EXPIRATION);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String generateRefreshToken(UserDetails userDetails){
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername(), SecurityConstants.JWT_LONG_EXPIRATION);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject, Long expiration) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.JWT_SHORT_EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SecurityConstants.getSigningKey(), SignatureAlgorithm.HS256) //Base 64 key
                 .compact();
     }

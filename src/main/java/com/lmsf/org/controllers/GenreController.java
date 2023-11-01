@@ -7,6 +7,7 @@ import com.lmsf.org.dto.PageRequestDto;
 import com.lmsf.org.service.BookService;
 import com.lmsf.org.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class GenreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GenreResponseDto>> fetchGenres(@Valid PageRequestDto pageRequestDto){
+    public ResponseEntity<Page<GenreResponseDto>> fetchGenres(@Valid PageRequestDto pageRequestDto){
             return ResponseEntity.ok(genreService.fetchGenres(
                     pageRequestDto.getPageNo(),
                     pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,
@@ -53,7 +54,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}/books")
-    public ResponseEntity<List<BookResponseDto>> getBooksByGenre(@PathVariable Long id, @Valid PageRequestDto pageRequestDto){
+    public ResponseEntity<Page<BookResponseDto>> getBooksByGenre(@PathVariable Long id, @Valid PageRequestDto pageRequestDto){
         return ResponseEntity.ok(bookService.getBooksByGenre(
                 id,
                 pageRequestDto.getPageNo(),

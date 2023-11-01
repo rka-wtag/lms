@@ -5,11 +5,11 @@ import com.lmsf.org.dto.IssueResponseDto;
 import com.lmsf.org.dto.PageRequestDto;
 import com.lmsf.org.service.IssuedBooksService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/issued-books")
@@ -24,7 +24,7 @@ public class IssuedBookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<IssueResponseDto>> fetchIssuedBooks(@Valid PageRequestDto pageRequestDto){
+    public ResponseEntity<Page<IssueResponseDto>> fetchIssuedBooks(@Valid PageRequestDto pageRequestDto){
         return ResponseEntity.ok(issuedBooksService.fetchIssuedBooks(
                 pageRequestDto.getPageNo(),
                 pageRequestDto.getPageSize() == 0 ? 10 : pageRequestDto.getPageSize(),

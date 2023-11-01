@@ -10,10 +10,7 @@ import com.lmsf.org.repository.BookRepository;
 import com.lmsf.org.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,15 +65,13 @@ public class GenreService {
     }
 
     @Transactional(readOnly = true)
-    public List<GenreResponseDto> fetchGenres(int pageNo, int pageSize, String field){
+    public Page<GenreResponseDto> fetchGenres(int pageNo, int pageSize, String field){
         Sort sort = Sort.by(Sort.Direction.ASC, field);
-        Page<Genre> pageGenres = genreRepository.findAll(PageRequest.of(pageNo, pageSize).withSort(sort));
+        Pageable pageable = PageRequest.of(pageNo, pageSize).withSort(sort);
+        Page<Genre> pageGenres = genreRepository.findAll(pageable);
         List<Genre> genres = pageGenres.getContent();
-
-        if(genres.isEmpty()){
-            throw new GenreNotFoundException("Currently Genre list is empty");
-        }
-        return genres.stream().map(genre -> modelMapper.map(genre, GenreResponseDto.class)).collect(Collectors.toList());
+        List<GenreResponseDto> genreResponseDto = genres.stream().map(genre -> modelMapper.map(genre, GenreResponseDto.class)).collect(Collectors.toList());
+        return new PageImpl<>(genreResponseDto, pageable, genreResponseDto.size());
     }
 
 }

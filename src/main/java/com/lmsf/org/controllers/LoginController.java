@@ -2,8 +2,11 @@ package com.lmsf.org.controllers;
 
 import com.lmsf.org.dto.LoginDto;
 import com.lmsf.org.dto.LoginResponseDto;
+import com.lmsf.org.dto.RefreshTokenResponse;
 import com.lmsf.org.service.CustomUserDetailsService;
 import com.lmsf.org.service.JwtService;
+import com.lmsf.org.service.LoginService;
+import com.lmsf.org.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,25 +27,10 @@ import javax.validation.Valid;
 @RequestMapping("/login")
 @RequiredArgsConstructor
 public class LoginController {
-
-    private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService customUserDetailsService;
-    public final JwtService jwtService;
-
+    private final LoginService loginService;
     @PostMapping
-    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginDto loginDto){
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginDto.getUsername(),
-                    loginDto.getPassword()
-            ));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (BadCredentialsException e){
-            throw new UsernameNotFoundException("Bad Credentials");
-        }
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginDto.getUsername());
-        final String jwt = jwtService.generateToken(userDetails);
-        return ResponseEntity.ok(new LoginResponseDto(jwt));
+    public ResponseEntity<RefreshTokenResponse> login(@RequestBody @Valid LoginDto loginDto){
+        return ResponseEntity.ok(loginService.authenticate(loginDto));
     }
 
 }

@@ -13,9 +13,7 @@ import com.lmsf.org.repository.AuthorRepository;
 import com.lmsf.org.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +36,21 @@ public class AuthorService {
         return modelMapper.map(authorRepository.save(author), AuthorResponseDto.class);
     }
 
-    public List<AuthorResponseDto> fetchAuthors(int pageNo, int pageSize, String field){
-        Sort sort = Sort.by(Sort.Direction.ASC, field);
-        Page<Author> pageAuthors = authorRepository.findAll(PageRequest.of(pageNo, pageSize).withSort(sort));
-        List<Author> authors = pageAuthors.getContent();
+    public Page<AuthorResponseDto> fetchAuthors(int pageNo, int pageSize, String field){
 
+        Sort sort = Sort.by(Sort.Direction.ASC, field);
+        Pageable pageable = PageRequest.of(pageNo, pageSize).withSort(sort);
+        Page<Author> pageAuthors = authorRepository.findAll(pageable);
+        List<Author> authors = pageAuthors.getContent();
         if(authors.isEmpty()){
             throw new AuthorNotFoundException("No author found");
         }
-        return authors.stream().map(book -> modelMapper.map(book, AuthorResponseDto.class))
+        List<AuthorResponseDto> authorResponseDtos = authors
+                .stream()
+                .map(author -> modelMapper.map(author, AuthorResponseDto.class))
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(authorResponseDtos, pageable, authorResponseDtos.size());
     }
 
     @Transactional(readOnly = true)
@@ -67,22 +70,19 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getBooksByAuthor(Long id, int pageNo, int pageSize, String field){
-
+    public Page<BookResponseDto> getBooksByAuthor(Long id, int pageNo, int pageSize, String field){
         if(!authorRepository.existsById(id)){
             throw new AuthorNotFoundException("Author not found with id : "+id);
         }
         Sort sort = Sort.by(Sort.Direction.ASC, field);
-        Page<Book> pageBooks = bookRepository.findByAuthorId(id, PageRequest.of(pageNo, pageSize).withSort(sort));
+        Pageable pageable = PageRequest.of(pageNo, pageSize).withSort(sort);
+        Page<Book> pageBooks = bookRepository.findByAuthorId(id, pageable);
         List<Book> books= pageBooks.getContent();
-
-        if(books.isEmpty()){
-            throw new BookNotFoundException("Noo books found");
-        }
-        return books
+        List<BookResponseDto> bookResponseDtos = books
                 .stream()
                 .map(book -> modelMapper.map(book, BookResponseDto.class))
                 .collect(Collectors.toList());
+        return new PageImpl<>(bookResponseDtos, pageable, bookResponseDtos.size());
     }
 
     @Transactional

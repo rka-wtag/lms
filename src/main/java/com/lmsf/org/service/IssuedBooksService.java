@@ -15,9 +15,7 @@ import com.lmsf.org.repository.IssuedBookRepository;
 import com.lmsf.org.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -66,19 +64,22 @@ public class IssuedBooksService {
     }
 
     @Transactional(readOnly = true)
-    public List<IssueResponseDto> fetchIssuedBooks(int pageNo, int pageSize, String field) {
+    public Page<IssueResponseDto> fetchIssuedBooks(int pageNo, int pageSize, String field) {
 
         MyCustomUserDetails myCustomUserDetails = (MyCustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Sort sort = Sort.by(Sort.Direction.ASC, field);
         Long id = myCustomUserDetails.getId();
-        Page<IssuedBook> pageIssuedBooks =  issuedBookRepository.findByUserId(id, PageRequest.of(pageNo, pageSize).withSort(sort));
+        Pageable pageable = PageRequest.of(pageNo, pageSize).withSort(sort);
+        Page<IssuedBook> pageIssuedBooks =  issuedBookRepository.findByUserId(id, pageable);
         List<IssuedBook> issuedBooks = pageIssuedBooks.getContent();
         if(issuedBooks.isEmpty()){
             throw new BookNotFoundException("You dont have any issued books");
         }
         List<IssueResponseDto> issueResponseDtoList = issuedBooks.stream().map(book -> modelMapper.map(book, IssueResponseDto.class)).collect(Collectors.toList());
+        List<IssueResponseDto> issueResponseDtoList1 = issueResponseDtoList.stream().peek(book -> book.setIssuer(myCustomUserDetails.getName())).collect(Collectors.toList());
 
-        return issueResponseDtoList.stream().peek(book -> book.setIssuer(myCustomUserDetails.getName())).collect(Collectors.toList());
+        return new PageImpl<>(issueResponseDtoList1, pageable, issueResponseDtoList1.size());
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)

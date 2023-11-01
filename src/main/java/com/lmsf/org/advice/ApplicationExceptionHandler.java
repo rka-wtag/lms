@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -160,6 +161,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handlePropertyReferenceException(PropertyReferenceException propertyReferenceException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", propertyReferenceException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TokenRefreshException.class)
+    public Map<String, String> handleTokenRefreshException(TokenRefreshException tokenRefreshException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", tokenRefreshException.getMessage());
         return errors;
     }
 

@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/logout").permitAll()
-                .antMatchers(HttpMethod.POST, "/issued-books").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/refresh-token").permitAll()
+                .antMatchers("/issued-books/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers(HttpMethod.POST).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.PUT).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
@@ -38,7 +39,8 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic();
+                .formLogin().disable();
+        http.httpBasic().disable();
         http.addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
