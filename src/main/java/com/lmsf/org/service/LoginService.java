@@ -34,7 +34,7 @@ public class LoginService {
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginDto.getUsername());
 
         final String jwt = jwtService.generateAccessToken(userDetails);
-        final String refreshToken = refreshTokenService.createRefreshToken(userDetails);
+        final String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return RefreshTokenResponse
                         .builder()

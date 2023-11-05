@@ -42,7 +42,7 @@ public class GenreService {
             throw new GenreNotFoundException("Genre not found with id : "+id);
         }
 
-        if(!bookRepository.existsByGenresId(id))
+        if(bookRepository.existsByGenresId(id))
             throw new GenreDeleteException("Cannot delete the genre with id '" + id + "' because it is associated with books.");
         genreRepository.deleteById(id);
     }

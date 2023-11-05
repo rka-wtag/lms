@@ -5,8 +5,8 @@ import com.lmsf.org.dto.AuthorResponseDto;
 import com.lmsf.org.dto.BookResponseDto;
 import com.lmsf.org.entity.Author;
 import com.lmsf.org.entity.Book;
+import com.lmsf.org.exception.AuthorDeleteException;
 import com.lmsf.org.exception.AuthorNotFoundException;
-import com.lmsf.org.exception.BookNotFoundException;
 import com.lmsf.org.exception.ConstraintsViolationException;
 import com.lmsf.org.exception.GenreDeleteException;
 import com.lmsf.org.repository.AuthorRepository;
@@ -36,6 +36,7 @@ public class AuthorService {
         return modelMapper.map(authorRepository.save(author), AuthorResponseDto.class);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuthorResponseDto> fetchAuthors(int pageNo, int pageSize, String field){
 
         Sort sort = Sort.by(Sort.Direction.ASC, field);
@@ -92,7 +93,7 @@ public class AuthorService {
         }
 
         if(!bookRepository.existsByAuthorId(id))
-            throw new GenreDeleteException("Cannot delete the Author with id '" + id + "' because it is associated with books.");
+            throw new AuthorDeleteException("Cannot delete the Author with id '" + id + "' because it is associated with books.");
 
         authorRepository.deleteById(id);
     }

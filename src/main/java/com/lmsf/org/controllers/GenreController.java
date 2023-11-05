@@ -49,7 +49,7 @@ public class GenreController {
             return ResponseEntity.ok(genreService.fetchGenres(
                     pageRequestDto.getPageNo(),
                     pageRequestDto.getPageSize() > 0 ? pageRequestDto.getPageSize() : 10,
-                    pageRequestDto.getSortingField() == null ? "name" : pageRequestDto.getSortingField()
+                    pageRequestDto.getSortingField() == null ? "id" : pageRequestDto.getSortingField()
             ));
     }
 

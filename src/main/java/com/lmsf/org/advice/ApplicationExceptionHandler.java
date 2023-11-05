@@ -92,7 +92,7 @@ public class ApplicationExceptionHandler {
         return errors;
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(GenreDeleteException.class)
     public Map<String, String> handleGenreDeleteException(GenreDeleteException genreDeleteException){
         Map<String, String> errors =  new HashMap<>();
@@ -169,6 +169,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleTokenRefreshException(TokenRefreshException tokenRefreshException){
         Map<String, String> errors =  new HashMap<>();
         errors.put("errorMessage", tokenRefreshException.getMessage());
+        return errors;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AuthorDeleteException.class)
+    public Map<String, String> handleAuthorDeleteException(AuthorDeleteException authorDeleteException){
+        Map<String, String> errors =  new HashMap<>();
+        errors.put("errorMessage", authorDeleteException.getMessage());
         return errors;
     }
 
