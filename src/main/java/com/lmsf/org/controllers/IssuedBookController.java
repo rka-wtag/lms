@@ -35,7 +35,7 @@ public class IssuedBookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> returnBooks(@PathVariable Long id){
         issuedBooksService.returnBooks(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

@@ -20,7 +20,7 @@ public class LibraryStaffController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLibraryStaff(@PathVariable Long id) {
         libraryStaffService.deleteLibraryStaff(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/")
