@@ -1,7 +1,5 @@
 HELP.md
-/src/main/resources/application.properties
 target/
-/src/main/java/com/lmsf/org/util/SecurityConstants.java
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

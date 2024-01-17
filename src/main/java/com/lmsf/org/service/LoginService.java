@@ -33,12 +33,12 @@ public class LoginService {
 
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginDto.getUsername());
 
-        final String jwt = jwtService.generateAccessToken(userDetails);
+        final String accessToken = jwtService.generateAccessToken(userDetails);
         final String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return RefreshTokenResponse
                         .builder()
-                        .accessToken(jwt)
+                        .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
     }
